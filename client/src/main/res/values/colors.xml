@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="accent">#FF4081</color>
+    <color name="divider">#B6B6B6</color>
+    <color name="light_grey">#EEEEEE</color>
+
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="primary_text_light">#F2F2F2</color>
+    <color name="error_text">#C00020</color>
+
+</resources>
