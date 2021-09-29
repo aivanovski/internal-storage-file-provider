@@ -3,6 +3,7 @@ package com.github.ai.fprovider.entity
 import com.github.ai.fprovider.Columns
 
 internal enum class Projection(val columnName: String) {
+    URI(Columns.URI),
     NAME(Columns.NAME),
     MIME_TYPE(Columns.MIME_TYPE),
     SIZE(Columns.SIZE);
