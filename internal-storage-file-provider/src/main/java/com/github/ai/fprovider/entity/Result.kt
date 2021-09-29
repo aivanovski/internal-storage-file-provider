@@ -2,7 +2,7 @@ package com.github.ai.fprovider.entity
 
 // This class is necessary because of kotlin.Result has @JvmInline annotation
 // which produces errors in tests
-sealed class Result<out T : Any> {
+internal sealed class Result<out T : Any> {
 
     val isSuccess: Boolean
         get() = this is Success
