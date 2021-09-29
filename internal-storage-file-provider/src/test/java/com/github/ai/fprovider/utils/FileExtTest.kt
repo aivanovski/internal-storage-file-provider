@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.utils
 
+import com.github.ai.fprovider.test.createMockedFile
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -17,6 +18,27 @@ class FileExtTest {
 
         // act
         val model = file.toModel()
+
+        // assert
+        assertThat(model.path).isEqualTo(FIRST_PATH)
+        assertThat(model.name).isEqualTo(FIRST_NAME)
+        assertThat(model.extension).isEqualTo(FIRST_EXTENSION)
+        assertThat(model.size).isEqualTo(FIRST_LENGTH)
+        assertThat(model.isDirectory).isEqualTo(FIRST_IS_DIRECTORY)
+    }
+
+    @Test
+    fun `toModel should convert file and trim root`() {
+        // arrange
+        val file = createMockedFile(
+            path = "$ROOT_PATH$FIRST_PATH",
+            name = FIRST_NAME,
+            length = FIRST_LENGTH,
+            isDirectory = FIRST_IS_DIRECTORY
+        )
+
+        // act
+        val model = file.toModel(trimPathPrefix = ROOT_PATH)
 
         // assert
         assertThat(model.path).isEqualTo(FIRST_PATH)
@@ -63,6 +85,8 @@ class FileExtTest {
     }
 
     companion object {
+        private const val ROOT_PATH = "/root/home"
+
         private const val FIRST_PATH = "/path/name.ext"
         private const val FIRST_NAME = "name.ext"
         private const val FIRST_EXTENSION = "ext"
