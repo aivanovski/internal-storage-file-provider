@@ -35,4 +35,13 @@ internal object FileUtils {
 
         return result.toString()
     }
+
+    internal fun getExtensionFromName(name: String): String? {
+        val lastPointIdx = name.lastIndexOf('.')
+        if (lastPointIdx < 0 || lastPointIdx == name.length - 1) {
+            return null
+        }
+
+        return name.substring(lastPointIdx + 1)
+    }
 }
