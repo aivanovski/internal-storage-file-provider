@@ -26,6 +26,14 @@ android {
 dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+	// Test dependencies
+	testImplementation "junit:junit:$jUnitVersion"
+	testImplementation "io.mockk:mockk:$mockkVersion"
+	testImplementation "com.google.truth:truth:$truthVersion"
+	testImplementation "org.robolectric:robolectric:$robolectricVersion"
+	testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+	testImplementation "androidx.appcompat:appcompat:$androidXVersion"
+
 	// Kotlin
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }

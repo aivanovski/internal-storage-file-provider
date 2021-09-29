@@ -1,6 +1,6 @@
 ext {
     android = [
-            minSdk    : 17,
+            minSdk    : 19,
             targetSdk : 29,
             compileSdk: 30
     ]
@@ -22,4 +22,12 @@ ext {
     annotationsVersion = '1.2.0'
     androidXVersion = '1.2.0'
     ciceroneVersion = '7.0'
+
+    // Test
+    jUnitVersion = '4.13.2'
+    robolectricVersion = '4.3'
+    mockkVersion = '1.11.0'
+    truthVersion = '1.0'
+    androidXArchVersion = '2.1.0'
+    androidXCoreVersion = '1.2.0'
 }
