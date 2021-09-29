@@ -8,5 +8,9 @@ internal data class FileModel(
     val size: Long,
     val isDirectory: Boolean
 ) {
-    val extension: String? = getExtensionFromName(name)
+    val extension: String? = if (!isDirectory) {
+        getExtensionFromName(name)
+    } else {
+        null
+    }
 }
