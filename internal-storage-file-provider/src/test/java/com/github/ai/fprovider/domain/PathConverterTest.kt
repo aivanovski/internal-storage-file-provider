@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.domain
 
+import com.github.ai.fprovider.entity.QueryType
 import com.github.ai.fprovider.test.TestData.DIRECTORY_FILE
 import com.github.ai.fprovider.test.TestData.IMAGE_FILE
 import com.github.ai.fprovider.test.createMockedUri
@@ -65,5 +66,47 @@ class PathConverterTest {
 
         // assert
         assertThat(path).isNull()
+    }
+
+    @Test
+    fun `getQueryType should return type for file`() {
+        // arrange
+        val uri = createMockedUri(
+            path = "/image.jpg"
+        )
+
+        // act
+        val queryType = pathConverter.getQueryType(uri)
+
+        // assert
+        assertThat(queryType).isEqualTo(QueryType.FILE_INFO)
+    }
+
+    @Test
+    fun `getQueryType should return type for directory listing`() {
+        // arrange
+        val uri = createMockedUri(
+            path = "/home/*"
+        )
+
+        // act
+        val queryType = pathConverter.getQueryType(uri)
+
+        // assert
+        assertThat(queryType).isEqualTo(QueryType.DIRECTORY_LIST)
+    }
+
+    @Test
+    fun `getQueryType should return null`() {
+        // arrange
+        val uri = createMockedUri(
+            path = null
+        )
+
+        // act
+        val queryType = pathConverter.getQueryType(uri)
+
+        // assert
+        assertThat(queryType).isNull()
     }
 }
