@@ -13,7 +13,6 @@ internal class FileModelFormatter {
 
     fun format(
         file: FileModel,
-        rootPath: String,
         authority: String,
         projection: List<Projection>,
         mimeTypeProvider: MimeTypeProvider
@@ -21,7 +20,7 @@ internal class FileModelFormatter {
         return projection
             .map { column ->
                 when (column) {
-                    URI -> "$CONTENT://$authority$rootPath${file.path}"
+                    URI -> "$CONTENT://$authority${file.path}"
                     NAME -> file.name
                     SIZE -> file.size.toString()
                     MIME_TYPE -> mimeTypeProvider.getMimeType(file) ?: EMPTY

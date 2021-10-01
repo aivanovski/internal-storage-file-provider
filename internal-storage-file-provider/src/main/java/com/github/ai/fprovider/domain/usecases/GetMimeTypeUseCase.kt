@@ -17,8 +17,7 @@ internal class GetMimeTypeUseCase(
         }
 
         val file = getFileResult.getOrThrow()
-        val mime = mimeTypeProvider.getMimeType(file)
-            ?: return Result.Success(EMPTY)
+        val mime = mimeTypeProvider.getMimeType(file) ?: EMPTY
 
         return Result.Success(mime)
     }

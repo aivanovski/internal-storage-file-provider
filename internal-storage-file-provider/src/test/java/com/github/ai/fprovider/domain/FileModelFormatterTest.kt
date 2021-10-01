@@ -27,22 +27,17 @@ class FileModelFormatterTest {
         // act
         val row = fileModelFormatter.format(
             file = IMAGE_FILE,
-            rootPath = ROOT_PATH,
             authority = AUTHORITY,
             projection = projection,
             mimeTypeProvider = mimeTypeProvider
         )
 
         // assert
-        val expectedUri = "$CONTENT://$AUTHORITY$ROOT_PATH${IMAGE_FILE.path}"
+        val expectedUri = "$CONTENT://$AUTHORITY${IMAGE_FILE.path}"
         assertThat(row.size).isEqualTo(4)
         assertThat(row[0]).isEqualTo(expectedUri)
         assertThat(row[1]).isEqualTo(IMAGE_FILE.name)
         assertThat(row[2]).isEqualTo(IMAGE_MIME_TYPE)
         assertThat(row[3]).isEqualTo(IMAGE_FILE.size.toString())
-    }
-
-    companion object {
-        private const val ROOT_PATH = "/data/data/com.test"
     }
 }

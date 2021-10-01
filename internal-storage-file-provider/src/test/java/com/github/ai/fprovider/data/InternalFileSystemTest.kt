@@ -47,7 +47,7 @@ class InternalFileSystemTest {
         assertThat(result.isSuccess).isTrue()
 
         val model = result.getOrThrow()
-        assertThat(model.path).isEqualTo(IMAGE_FILE.path)
+        assertThat(model.path).isEqualTo(file.path)
         assertThat(model.name).isEqualTo(IMAGE_FILE.name)
         assertThat(model.isDirectory).isEqualTo(IMAGE_FILE.isDirectory)
         assertThat(model.size).isEqualTo(FILE_CONTENT.length)

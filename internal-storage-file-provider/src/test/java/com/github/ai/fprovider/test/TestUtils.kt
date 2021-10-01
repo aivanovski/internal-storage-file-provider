@@ -24,7 +24,7 @@ internal fun createMockedFile(
         }
 }
 
-internal fun createMockedUri(
+internal fun mockUri(
     path: String?
 ): Uri {
     return mockk<Uri>()

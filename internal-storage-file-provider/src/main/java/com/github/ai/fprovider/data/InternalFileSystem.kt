@@ -16,6 +16,6 @@ internal class InternalFileSystem(
             return Result.Failure(FileNotFoundException(file.path))
         }
 
-        return Result.Success(file.toModel(trimPathPrefix = rootDirPath))
+        return Result.Success(file.toModel())
     }
 }

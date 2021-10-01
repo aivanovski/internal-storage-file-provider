@@ -4,15 +4,19 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import com.github.ai.fprovider.entity.Result
 import android.os.RemoteException
 import com.github.ai.fprovider.data.InternalFileSystem
+import com.github.ai.fprovider.domain.FileModelFormatter
 import com.github.ai.fprovider.domain.Interactor
 import com.github.ai.fprovider.domain.MimeTypeProvider
 import com.github.ai.fprovider.domain.PathConverter
+import com.github.ai.fprovider.domain.ProjectionMapper
+import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
+import com.github.ai.fprovider.entity.Result
+import com.github.ai.fprovider.utils.toCursor
 
-class InternalStorageFileProvider constructor(): ContentProvider() {
+class InternalStorageFileProvider constructor() : ContentProvider() {
 
     private lateinit var interactor: Interactor
 
@@ -29,10 +33,17 @@ class InternalStorageFileProvider constructor(): ContentProvider() {
 
         interactor = Interactor(
             pathConverter = PathConverter(),
+            projectionMapper = ProjectionMapper(),
             mimeTypeUseCase = GetMimeTypeUseCase(
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider
-            )
+            ),
+            fileInfoUseCase = GetFileInfoUseCase(
+                fileSystem = fileSystem,
+                mimeTypeProvider = mimeTypeProvider,
+                fileModelFormatter = FileModelFormatter(),
+                authority = "" // TODO: should be read from manifest
+            ),
         )
 
         return true
@@ -53,8 +64,14 @@ class InternalStorageFileProvider constructor(): ContentProvider() {
         selection: String?,
         selectionArgs: Array<String>?,
         sortOrder: String?
-    ): Cursor? {
-        throw RuntimeException()
+    ): Cursor {
+        val columns = projection?.toList() ?: emptyList()
+        val result = interactor.query(uri, columns)
+        if (result.isFailure) {
+            throwExceptionFromResult(result)
+        }
+
+        return result.getOrThrow().toCursor()
     }
 
     override fun insert(

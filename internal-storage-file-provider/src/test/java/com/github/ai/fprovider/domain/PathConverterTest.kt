@@ -3,7 +3,7 @@ package com.github.ai.fprovider.domain
 import com.github.ai.fprovider.entity.QueryType
 import com.github.ai.fprovider.test.TestData.DIRECTORY_FILE
 import com.github.ai.fprovider.test.TestData.IMAGE_FILE
-import com.github.ai.fprovider.test.createMockedUri
+import com.github.ai.fprovider.test.mockUri
 import com.github.ai.fprovider.utils.Constants.ROOT
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -15,7 +15,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for file`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = IMAGE_FILE.path
         )
 
@@ -29,7 +29,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for directory`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = "${DIRECTORY_FILE.path}/*"
         )
 
@@ -43,7 +43,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for root`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = "/*"
         )
 
@@ -57,7 +57,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return null`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = ""
         )
 
@@ -71,7 +71,7 @@ class PathConverterTest {
     @Test
     fun `getQueryType should return type for file`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = "/image.jpg"
         )
 
@@ -85,7 +85,7 @@ class PathConverterTest {
     @Test
     fun `getQueryType should return type for directory listing`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = "/home/*"
         )
 
@@ -99,7 +99,7 @@ class PathConverterTest {
     @Test
     fun `getQueryType should return null`() {
         // arrange
-        val uri = createMockedUri(
+        val uri = mockUri(
             path = null
         )
 
