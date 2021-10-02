@@ -1,6 +1,7 @@
 package com.github.ai.fprovider.domain
 
 import android.net.Uri
+import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
 import com.github.ai.fprovider.entity.QueryType.DIRECTORY_LIST
@@ -8,13 +9,13 @@ import com.github.ai.fprovider.entity.QueryType.FILE_INFO
 import com.github.ai.fprovider.entity.Result
 import com.github.ai.fprovider.entity.Table
 import com.github.ai.fprovider.entity.exception.InvalidPathException
-import java.lang.RuntimeException
 
 internal class Interactor(
     private val pathConverter: PathConverter,
     private val projectionMapper: ProjectionMapper,
     private val mimeTypeUseCase: GetMimeTypeUseCase,
-    private val fileInfoUseCase: GetFileInfoUseCase
+    private val fileInfoUseCase: GetFileInfoUseCase,
+    private val directoryListUseCase: GetDirectoryListUseCase
 ) {
 
     fun getMimeType(uri: Uri): Result<String> {
@@ -35,7 +36,7 @@ internal class Interactor(
 
         return when(queryType) {
             FILE_INFO -> fileInfoUseCase.getFileInto(path, projection)
-            DIRECTORY_LIST -> throw RuntimeException() // TODO: to be done
+            DIRECTORY_LIST -> directoryListUseCase.getDirectoryList(path, projection)
         }
     }
 }

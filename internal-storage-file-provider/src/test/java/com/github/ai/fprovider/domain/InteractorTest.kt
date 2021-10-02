@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.domain
 
+import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
 import com.github.ai.fprovider.entity.Projection
@@ -20,11 +21,13 @@ class InteractorTest {
     private val projectionMapper: ProjectionMapper = mockk()
     private val mimeTypeUseCase: GetMimeTypeUseCase = mockk()
     private val fileInfoUseCase: GetFileInfoUseCase = mockk()
+    private val directoryListUseCase: GetDirectoryListUseCase = mockk()
     private val interactor = Interactor(
         pathConverter = pathConverter,
         projectionMapper = projectionMapper,
         mimeTypeUseCase = mimeTypeUseCase,
-        fileInfoUseCase = fileInfoUseCase
+        fileInfoUseCase = fileInfoUseCase,
+        directoryListUseCase = directoryListUseCase
     )
 
     @Test
@@ -77,10 +80,24 @@ class InteractorTest {
         assertThat(result).isEqualTo(Result.Success(FILE_INFO_TABLE))
     }
 
-    @Test(expected = RuntimeException::class)
-    fun `query should return directory list`() {
-        // TODO: to be done
-        interactor.query(mockUri(path = "/*"), emptyList())
+    @Test
+    fun `query should route to GetDirectoryListUseCase`() {
+        // arrange
+        val uri = mockUri(path = PATH)
+        every { pathConverter.getQueryType(uri) }.returns(QueryType.DIRECTORY_LIST)
+        every { pathConverter.getPath(uri) }.returns(PATH)
+        every { projectionMapper.getProjectionFromColumns(ALL_COLUMNS) }.returns(ALL_PROJECTIONS)
+        every { directoryListUseCase.getDirectoryList(PATH, ALL_PROJECTIONS) }.returns(
+            Result.Success(
+                DIRECTORY_LIST_TABLE
+            )
+        )
+
+        // act
+        val result = interactor.query(uri, ALL_COLUMNS)
+
+        // assert
+        assertThat(result).isEqualTo(Result.Success(DIRECTORY_LIST_TABLE))
     }
 
     @Test
@@ -120,6 +137,10 @@ class InteractorTest {
                 ALL_COLUMNS.map { "$it-placeholder-value" }
             ),
             columns = ALL_COLUMNS.map { "$it-placeholder" }
+        )
+        private val DIRECTORY_LIST_TABLE = Table(
+            rows = listOf(),
+            columns = ALL_COLUMNS.map { "$it" }
         )
         private const val PATH = "/path/placeholder"
         private const val RESULT = "result-placeholder"

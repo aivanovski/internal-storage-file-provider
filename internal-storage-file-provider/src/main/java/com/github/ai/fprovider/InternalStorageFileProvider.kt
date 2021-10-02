@@ -11,6 +11,7 @@ import com.github.ai.fprovider.domain.Interactor
 import com.github.ai.fprovider.domain.MimeTypeProvider
 import com.github.ai.fprovider.domain.PathConverter
 import com.github.ai.fprovider.domain.ProjectionMapper
+import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
 import com.github.ai.fprovider.entity.Result
@@ -30,6 +31,7 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         val rootPath = context.filesDir?.parentFile?.path ?: return false
         val fileSystem = InternalFileSystem(rootPath)
         val mimeTypeProvider = MimeTypeProvider()
+        val fileModelFormatter = FileModelFormatter()
 
         interactor = Interactor(
             pathConverter = PathConverter(),
@@ -41,9 +43,15 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
             fileInfoUseCase = GetFileInfoUseCase(
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider,
-                fileModelFormatter = FileModelFormatter(),
+                fileModelFormatter = fileModelFormatter,
                 authority = "" // TODO: should be read from manifest
             ),
+            directoryListUseCase = GetDirectoryListUseCase(
+                fileSystem = fileSystem,
+                mimeTypeProvider = mimeTypeProvider,
+                fileModelFormatter = fileModelFormatter,
+                authority = "" // TODO: should re read from manifest
+            )
         )
 
         return true
