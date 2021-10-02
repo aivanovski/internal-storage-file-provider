@@ -17,7 +17,7 @@ internal fun File.toModel(trimPathPrefix: String? = null): FileModel {
             path
         },
         name = name,
-        size = length(),
+        size = if (isDirectory) -1L else length(),
         isDirectory = isDirectory
     )
 }

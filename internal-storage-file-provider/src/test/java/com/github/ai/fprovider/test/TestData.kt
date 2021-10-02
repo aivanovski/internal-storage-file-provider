@@ -9,15 +9,22 @@ internal object TestData {
     const val DIRECTORY_MIME_TYPE = MimeTypes.DIRECTORY
     const val AUTHORITY = "com.test.authority"
 
+    val PARENT_FILE = FileModel(
+        path = "/home",
+        name = "home",
+        size = -1L,
+        isDirectory = true
+    )
+
     val IMAGE_FILE = FileModel(
-        path = "/home/image.jpg",
+        path = PARENT_FILE.path + "/image.jpg",
         name = "image.jpg",
         size = 12345L,
         isDirectory = false
     )
 
     val DIRECTORY_FILE = FileModel(
-        path = "/home/tmp",
+        path = PARENT_FILE.path + "/tmp",
         name = "tmp",
         size = -1L,
         isDirectory = true
