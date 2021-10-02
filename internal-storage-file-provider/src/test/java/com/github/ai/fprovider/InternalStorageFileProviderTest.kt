@@ -2,6 +2,7 @@ package com.github.ai.fprovider
 
 import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import android.os.RemoteException
 import androidx.appcompat.app.AppCompatActivity
 import com.github.ai.fprovider.domain.Interactor
@@ -101,7 +102,7 @@ class InternalStorageFileProviderTest {
 
         // act
         val cursor = contentResolver.query(
-            IMAGE_FILE.toUri(),
+            uri,
             ALL_COLUMNS.toTypedArray(),
             null,
             null,
@@ -111,7 +112,7 @@ class InternalStorageFileProviderTest {
         // assert
         assertThat(cursor).isNotNull()
         if (cursor != null) {
-            assertThat(cursor.count).isEqualTo(1)
+            assertThat(cursor.count).isEqualTo(IMAGE_FILE_INFO.rows.size)
             assertThat(cursor.columnNames).isEqualTo(IMAGE_FILE_INFO.columns.toTypedArray())
 
             val info = IMAGE_FILE_INFO.rows.first()
@@ -120,6 +121,43 @@ class InternalStorageFileProviderTest {
             assertThat(cursor.getString(1)).isEqualTo(info[1])
             assertThat(cursor.getString(2)).isEqualTo(info[2])
             assertThat(cursor.getString(3)).isEqualTo(info[3])
+        }
+    }
+
+    @Test
+    fun `query should return directory list`() {
+        // arrange
+        val uri = Uri.parse("content://$AUTHORITY/*")
+        every { interactor.query(uri, ALL_COLUMNS) }.returns(Result.Success(DIRECTORY_LIST))
+
+        // act
+        val cursor = contentResolver.query(
+            uri,
+            ALL_COLUMNS.toTypedArray(),
+            null,
+            null,
+            null
+        )
+
+        // assert
+        assertThat(cursor).isNotNull()
+        if (cursor != null) {
+            assertThat(cursor.count).isEqualTo(DIRECTORY_LIST.rows.size)
+            assertThat(cursor.columnNames).isEqualTo(DIRECTORY_LIST.columns.toTypedArray())
+
+            val firstExpectedFile = DIRECTORY_LIST.rows[0]
+            cursor.moveToNext()
+            assertThat(cursor.getString(0)).isEqualTo(firstExpectedFile[0])
+            assertThat(cursor.getString(1)).isEqualTo(firstExpectedFile[1])
+            assertThat(cursor.getString(2)).isEqualTo(firstExpectedFile[2])
+            assertThat(cursor.getString(3)).isEqualTo(firstExpectedFile[3])
+
+            val secondExpectedFile = DIRECTORY_LIST.rows[1]
+            cursor.moveToNext()
+            assertThat(cursor.getString(0)).isEqualTo(secondExpectedFile[0])
+            assertThat(cursor.getString(1)).isEqualTo(secondExpectedFile[1])
+            assertThat(cursor.getString(2)).isEqualTo(secondExpectedFile[2])
+            assertThat(cursor.getString(3)).isEqualTo(secondExpectedFile[3])
         }
     }
 
@@ -144,12 +182,6 @@ class InternalStorageFileProviderTest {
         // assert
         assertThat(exception).isInstanceOf(RemoteException::class.java)
         assertThat(exception.message).isEqualTo(expectedException.toString())
-    }
-
-    @Test(expected = RuntimeException::class)
-    fun `query should return file list`() {
-        // TODO: to be done
-        contentResolver.query(IMAGE_FILE.toUri(), null, null, null, null)
     }
 
     @Test(expected = RuntimeException::class)
@@ -189,6 +221,13 @@ class InternalStorageFileProviderTest {
         private val IMAGE_FILE_INFO = Table(
             rows = listOf(
                 ALL_COLUMNS.map { "$it-placeholder" }
+            ),
+            columns = ALL_COLUMNS
+        )
+        private val DIRECTORY_LIST = Table(
+            rows = listOf(
+                ALL_COLUMNS.map { "$it-file-placeholder" },
+                ALL_COLUMNS.map { "$it-dir-placeholder" },
             ),
             columns = ALL_COLUMNS
         )
