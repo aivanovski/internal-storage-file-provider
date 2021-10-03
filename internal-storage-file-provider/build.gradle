@@ -2,38 +2,38 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-	def ext = rootProject.extensions.ext
+    def ext = rootProject.extensions.ext
 
-	compileSdkVersion ext.android.compileSdk
+    compileSdkVersion ext.android.compileSdk
 
-	defaultConfig {
-		minSdkVersion ext.android.minSdk
-		targetSdkVersion ext.android.targetSdk
-		versionCode ext.version.versionCode
-		versionName ext.version.versionName
+    defaultConfig {
+        minSdkVersion ext.android.minSdk
+        targetSdkVersion ext.android.targetSdk
+        versionCode ext.version.versionCode
+        versionName ext.version.versionName
 
-		testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
 
-	}
-	buildTypes {
-		release {
-			minifyEnabled false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-		}
-	}
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-	// Test dependencies
-	testImplementation "junit:junit:$jUnitVersion"
-	testImplementation "io.mockk:mockk:$mockkVersion"
-	testImplementation "com.google.truth:truth:$truthVersion"
-	testImplementation "org.robolectric:robolectric:$robolectricVersion"
-	testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
-	testImplementation "androidx.appcompat:appcompat:$androidXVersion"
+    // Test dependencies
+    testImplementation "junit:junit:$jUnitVersion"
+    testImplementation "io.mockk:mockk:$mockkVersion"
+    testImplementation "com.google.truth:truth:$truthVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+    testImplementation "androidx.appcompat:appcompat:$androidXVersion"
 
-	// Kotlin
-	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
