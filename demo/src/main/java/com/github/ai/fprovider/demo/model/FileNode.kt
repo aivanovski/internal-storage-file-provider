@@ -8,9 +8,6 @@ sealed class FileNode(
 ) {
     val name: String
         get() = path.getFileNameFromPath()
-
-    val isDirectory: Boolean
-        get() = (files != null)
 }
 
 data class DirectoryNode(

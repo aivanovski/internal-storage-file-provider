@@ -39,7 +39,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.1'
+        kotlinCompilerExtensionVersion "$kotlinCompilerApiVersion"
     }
 }
 
@@ -52,7 +52,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
 
     // AndroidX libraries
-    implementation "androidx.appcompat:appcompat:$androidXVersion"
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "com.google.android.material:material:$androidXVersion"
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     implementation "androidx.annotation:annotation:$annotationsVersion"

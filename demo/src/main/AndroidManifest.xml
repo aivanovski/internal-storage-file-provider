@@ -12,19 +12,23 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity">
+            android:name="com.github.ai.fprovider.demo.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- TODO: add meta-data with authority -->
+        <meta-data
+            android:name="com.github.ai.fprovider.provider_authority"
+            android:value="com.github.ai.fprovider.client.files" />
+
         <provider
-            android:authorities="com.github.ai.fprovider.demo.files"
             android:name="com.github.ai.fprovider.InternalStorageFileProvider"
-            android:exported="true"
-            android:grantUriPermissions="true"/>
+            android:authorities="com.github.ai.fprovider.demo.files"
+            android:enabled="true"
+            android:exported="true" />
 
     </application>
 

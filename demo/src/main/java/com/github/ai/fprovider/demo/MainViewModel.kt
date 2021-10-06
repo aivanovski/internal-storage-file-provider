@@ -16,7 +16,7 @@ class MainViewModel(private val interactor: FileSystemInteractor) : ViewModel() 
         _isProgressVisible.value = true
 
         viewModelScope.launch {
-            interactor.createFiles()
+            interactor.createFilesInsideInternalStorage()
             _isProgressVisible.value = false
         }
     }

@@ -16,7 +16,7 @@ import java.io.InputStream
 
 class FileSystemInteractor(private val context: Context) {
 
-    suspend fun createFiles() {
+    suspend fun createFilesInsideInternalStorage() {
         withContext(Dispatchers.IO) {
             val dataRootDir = context.filesDir
 
