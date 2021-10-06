@@ -8,6 +8,7 @@ import android.os.RemoteException
 import com.github.ai.fprovider.data.InternalFileSystem
 import com.github.ai.fprovider.domain.FileModelFormatter
 import com.github.ai.fprovider.domain.Interactor
+import com.github.ai.fprovider.domain.MetaDataReader
 import com.github.ai.fprovider.domain.MimeTypeProvider
 import com.github.ai.fprovider.domain.PathConverter
 import com.github.ai.fprovider.domain.ProjectionMapper
@@ -32,6 +33,7 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         val fileSystem = InternalFileSystem(rootPath)
         val mimeTypeProvider = MimeTypeProvider()
         val fileModelFormatter = FileModelFormatter()
+        val authority = MetaDataReader().readAuthority(context)
 
         interactor = Interactor(
             pathConverter = PathConverter(),
@@ -44,13 +46,13 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider,
                 fileModelFormatter = fileModelFormatter,
-                authority = "" // TODO: should be read from manifest
+                authority = authority
             ),
             directoryListUseCase = GetDirectoryListUseCase(
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider,
                 fileModelFormatter = fileModelFormatter,
-                authority = "" // TODO: should re read from manifest
+                authority = authority
             )
         )
 
