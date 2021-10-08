@@ -50,7 +50,7 @@ class InternalFileSystemTest {
         assertThat(result.isSuccess).isTrue()
 
         val model = result.getOrThrow()
-        assertThat(model.path).isEqualTo(file.path)
+        assertThat(model.path).isEqualTo(IMAGE_FILE.path)
         assertThat(model.name).isEqualTo(IMAGE_FILE.name)
         assertThat(model.isDirectory).isEqualTo(IMAGE_FILE.isDirectory)
         assertThat(model.size).isEqualTo(FILE_CONTENT.length)
@@ -97,17 +97,12 @@ class InternalFileSystemTest {
         val imageFileModel = models.first { it.name == IMAGE_FILE.name }
         assertThat(imageFileModel).isEqualTo(
             IMAGE_FILE.copy(
-                path = innerFile.path,
                 size = FILE_CONTENT.length.toLong()
             )
         )
 
         val dirFileModel = models.first { it.name == DIRECTORY_FILE.name }
-        assertThat(dirFileModel).isEqualTo(
-            DIRECTORY_FILE.copy(
-                path = innerDir.path,
-            )
-        )
+        assertThat(dirFileModel).isEqualTo(DIRECTORY_FILE)
     }
 
     @Test

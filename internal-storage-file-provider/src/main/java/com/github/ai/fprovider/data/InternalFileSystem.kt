@@ -20,7 +20,7 @@ internal class InternalFileSystem(
             return Result.Failure(FileNotFoundException(file.path))
         }
 
-        return Result.Success(file.toModel())
+        return Result.Success(file.toModel(trimPathPrefix = rootDirPath))
     }
 
     override fun getChildFiles(parentPath: String): Result<List<FileModel>> {
@@ -40,7 +40,7 @@ internal class InternalFileSystem(
         // TODO: write test for NoAccessException
         val files = file.listFiles()
             ?.toList()
-            ?.toModels()
+            ?.toModels(trimPathPrefix = rootDirPath)
             ?: return Result.Failure(NoAccessException(file))
 
         return Result.Success(files)
