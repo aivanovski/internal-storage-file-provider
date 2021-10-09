@@ -21,8 +21,7 @@ android {
     }
 
     buildFeatures {
-        dataBinding true
-        viewBinding true
+        compose true
     }
 
     compileOptions {
@@ -58,9 +57,15 @@ android {
         checkReleaseBuilds true
         abortOnError false
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion "$kotlinCompilerApiVersion"
+    }
 }
 
 dependencies {
+    implementation project(":internal-storage-file-provider")
+
     // MultiDex
     implementation "androidx.multidex:multidex:$multidexVersion"
 
@@ -78,7 +83,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
 
     // AndroidX libraries
-    implementation "androidx.appcompat:appcompat:$androidXVersion"
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "com.google.android.material:material:$androidXVersion"
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     implementation "androidx.annotation:annotation:$annotationsVersion"
@@ -94,6 +99,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
+    // Compose
+    implementation "androidx.activity:activity-compose:$activityComposeVersion"
+    implementation "androidx.compose.material:material:$composeVersion"
+    implementation "androidx.compose.ui:ui-tooling:$composeVersion"
+    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
+    implementation "androidx.constraintlayout:constraintlayout-compose:$constrainLayoutComposeVersion"
 
     //Cicerone
     implementation "com.github.terrakok:cicerone:$ciceroneVersion"

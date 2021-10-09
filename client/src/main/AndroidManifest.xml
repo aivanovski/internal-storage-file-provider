@@ -4,7 +4,7 @@
     package="com.github.ai.fprovider.demo">
 
     <application
-        android:name=".App"
+        android:name="com.github.ai.fprovider.demo.App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
 
         <!-- Activities -->
         <activity
-            android:name=".ClientActivity">
+            android:name="com.github.ai.fprovider.demo.presentation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
