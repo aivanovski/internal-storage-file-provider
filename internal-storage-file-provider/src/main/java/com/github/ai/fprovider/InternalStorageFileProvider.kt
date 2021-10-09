@@ -16,10 +16,13 @@ import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
 import com.github.ai.fprovider.entity.Result
+import com.github.ai.fprovider.logging.AndroidLogcatLogger
 import com.github.ai.fprovider.utils.toCursor
 
 class InternalStorageFileProvider constructor() : ContentProvider() {
 
+    private val isLoggingEnabled = false
+    private val logger = AndroidLogcatLogger(InternalStorageFileProvider::class)
     private lateinit var interactor: Interactor
 
     internal constructor(interactor: Interactor) : this() {
@@ -61,6 +64,11 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
 
     override fun getType(uri: Uri): String {
         val result = interactor.getMimeType(uri)
+
+        if (isLoggingEnabled) {
+            logger.d("getType: uri=$uri, result=$result")
+        }
+
         if (result.isFailure) {
             throwExceptionFromResult(result)
         }
@@ -77,6 +85,11 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
     ): Cursor {
         val columns = projection?.toList() ?: emptyList()
         val result = interactor.query(uri, columns)
+
+        if (isLoggingEnabled) {
+            logger.d("query: uri=$uri, columns=$columns, result=$result")
+        }
+
         if (result.isFailure) {
             throwExceptionFromResult(result)
         }
