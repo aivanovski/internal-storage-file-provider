@@ -22,7 +22,7 @@
 
         <meta-data
             android:name="com.github.ai.fprovider.provider_authority"
-            android:value="com.github.ai.fprovider.client.files" />
+            android:value="com.github.ai.fprovider.demo.files" />
 
         <provider
             android:name="com.github.ai.fprovider.InternalStorageFileProvider"
