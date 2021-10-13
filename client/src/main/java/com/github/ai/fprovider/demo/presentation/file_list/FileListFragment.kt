@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,15 +12,17 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.fragment.app.Fragment
 import com.github.ai.fprovider.demo.R
+import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.extension.setupActionBar
 import com.github.ai.fprovider.demo.extension.showToastMessage
+import com.github.ai.fprovider.demo.extension.toPath
+import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.utils.EventObserver
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FileListFragment : Fragment() {
 
     private val viewModel: FileListViewModel by viewModel()
-
     private var backCallback: OnBackPressedCallback? = null
 
     override fun onCreateView(
@@ -88,6 +91,9 @@ class FileListFragment : Fragment() {
         viewModel.showToastMessageEvent.observe(viewLifecycleOwner, EventObserver {
             showToastMessage(it)
         })
+        viewModel.openFileEvent.observe(viewLifecycleOwner, EventObserver {
+            openFile(it)
+        })
     }
 
     private fun setActionBarTitle(text: String) {
@@ -101,6 +107,20 @@ class FileListFragment : Fragment() {
             setHomeAsUpIndicator(null)
             setDisplayHomeAsUpEnabled(isBackVisible)
         }
+    }
+
+    private fun openFile(file: FileEntity) {
+        val uri = file.toPath().toUri()
+
+        val intent = Intent(Intent.ACTION_VIEW)
+            .apply {
+                if (!file.mimeType.isNullOrBlank()) {
+                    setDataAndType(uri, file.mimeType)
+                } else {
+                    data = uri
+                }
+            }
+        startActivity(intent)
     }
 
     companion object {

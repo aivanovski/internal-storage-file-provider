@@ -97,6 +97,7 @@ class FileSystemImpl(
                         path = uri,
                         name = name,
                         size = size.toLong(),
+                        mimeType = mimeType,
                         isDirectory = (mimeType == MimeTypes.DIRECTORY)
                     )
                 )

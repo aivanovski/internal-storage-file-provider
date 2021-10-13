@@ -11,6 +11,7 @@ import com.github.ai.fprovider.demo.domain.ResourceProvider
 import com.github.ai.fprovider.demo.domain.file_list.FileListInteractor
 import com.github.ai.fprovider.demo.extension.toFilePath
 import com.github.ai.fprovider.demo.extension.toPath
+import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
@@ -33,6 +34,7 @@ class FileListViewModel(
     val actionBarTitle = MutableLiveData(resourceProvider.getString(R.string.app_name))
     val isActionBarBackButtonVisible = MutableLiveData(false)
     val showToastMessageEvent = MutableLiveData<Event<String>>()
+    val openFileEvent = MutableLiveData<Event<FileEntity>>()
 
     private var isExitOnBack = false
     private var currentPath = FilePath(authority = AUTHORITY, path = "/*")
@@ -118,6 +120,9 @@ class FileListViewModel(
         when {
             file == parentDir -> onParentDirectoryClicked()
             file.isDirectory -> onDirectoryClicked(file)
+            else -> {
+                openFileEvent.value = Event(file)
+            }
         }
     }
 
