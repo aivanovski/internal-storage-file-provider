@@ -4,6 +4,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import com.github.ai.fprovider.data.InternalFileSystem
 import com.github.ai.fprovider.domain.FileModelFormatter
@@ -15,9 +16,11 @@ import com.github.ai.fprovider.domain.ProjectionMapper
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
+import com.github.ai.fprovider.domain.usecases.GetPathUseCase
 import com.github.ai.fprovider.entity.Result
 import com.github.ai.fprovider.logging.AndroidLogcatLogger
 import com.github.ai.fprovider.utils.toCursor
+import java.io.File
 
 class InternalStorageFileProvider constructor() : ContentProvider() {
 
@@ -56,6 +59,9 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
                 mimeTypeProvider = mimeTypeProvider,
                 fileModelFormatter = fileModelFormatter,
                 authority = authority
+            ),
+            pathUseCase = GetPathUseCase(
+                fileSystem = fileSystem
             )
         )
 
@@ -119,6 +125,17 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         selectionArgs: Array<String>?
     ): Int {
         throw RuntimeException()
+    }
+
+    override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
+        val getPathResult = interactor.getRealFilePath(uri)
+        if (getPathResult.isFailure) {
+            throwExceptionFromResult(getPathResult)
+        }
+
+        val path = getPathResult.getOrThrow()
+
+        return ParcelFileDescriptor.open(File(path), ParcelFileDescriptor.MODE_READ_ONLY)
     }
 
     private fun throwExceptionFromResult(result: Result<*>): Nothing {

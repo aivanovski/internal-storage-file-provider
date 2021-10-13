@@ -3,6 +3,7 @@ package com.github.ai.fprovider.domain
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
+import com.github.ai.fprovider.domain.usecases.GetPathUseCase
 import com.github.ai.fprovider.entity.Projection
 import com.github.ai.fprovider.entity.QueryType
 import com.github.ai.fprovider.entity.Result
@@ -14,6 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
+import java.io.FileNotFoundException
 
 class InteractorTest {
 
@@ -22,12 +24,14 @@ class InteractorTest {
     private val mimeTypeUseCase: GetMimeTypeUseCase = mockk()
     private val fileInfoUseCase: GetFileInfoUseCase = mockk()
     private val directoryListUseCase: GetDirectoryListUseCase = mockk()
+    private val pathUseCase: GetPathUseCase = mockk()
     private val interactor = Interactor(
         pathConverter = pathConverter,
         projectionMapper = projectionMapper,
         mimeTypeUseCase = mimeTypeUseCase,
         fileInfoUseCase = fileInfoUseCase,
-        directoryListUseCase = directoryListUseCase
+        directoryListUseCase = directoryListUseCase,
+        pathUseCase = pathUseCase
     )
 
     @Test
@@ -129,6 +133,49 @@ class InteractorTest {
         assertThat(result.getExceptionOrThrow()).isInstanceOf(InvalidPathException::class.java)
     }
 
+    @Test
+    fun `getRealPath should return real file path`() {
+        // arrange
+        val uri = mockUri(path = PATH)
+        every { pathConverter.getPath(uri) }.returns(PATH)
+        every { pathUseCase.getRealPath(PATH) }.returns(Result.Success(REAL_PATH))
+
+        // act
+        val result = interactor.getRealFilePath(uri)
+
+        // assert
+        assertThat(result).isEqualTo(Result.Success(REAL_PATH))
+    }
+
+    @Test
+    fun `getRealPath should return InvalidPathException if path is not valid`() {
+        // arrange
+        val uri = mockUri(path = PATH)
+        every { pathConverter.getPath(uri) }.returns(null)
+
+        // act
+        val result = interactor.getRealFilePath(uri)
+
+        // assert
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.getExceptionOrThrow()).isInstanceOf(InvalidPathException::class.java)
+    }
+
+    @Test
+    fun `getRealPath should return error from GetPathUseCase`() {
+        // arrange
+        val uri = mockUri(path = PATH)
+        every { pathConverter.getPath(uri) }.returns(PATH)
+        every { pathUseCase.getRealPath(PATH) }.returns(Result.Failure(FileNotFoundException()))
+
+        // act
+        val result = interactor.getRealFilePath(uri)
+
+        // assert
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.getExceptionOrThrow()).isInstanceOf(FileNotFoundException::class.java)
+    }
+
     companion object {
         private val ALL_COLUMNS = Projection.values().map { it.columnName }
         private val ALL_PROJECTIONS = Projection.values().toList()
@@ -144,5 +191,6 @@ class InteractorTest {
         )
         private const val PATH = "/path/placeholder"
         private const val RESULT = "result-placeholder"
+        private const val REAL_PATH = "/data/data/path/placeholder"
     }
 }

@@ -2,6 +2,7 @@ package com.github.ai.fprovider.data
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import com.github.ai.fprovider.entity.Result
 import com.github.ai.fprovider.entity.exception.InvalidFileTypeException
 import com.github.ai.fprovider.test.TestData.DIRECTORY_FILE
 import com.github.ai.fprovider.test.TestData.IMAGE_FILE
@@ -132,6 +133,34 @@ class InternalFileSystemTest {
         // assert
         assertThat(model.isFailure).isTrue()
         assertThat(model.getExceptionOrThrow()).isInstanceOf(InvalidFileTypeException::class.java)
+    }
+
+    @Test
+    fun `getRealPath should return path to real file`() {
+        // arrange
+        val file = File(rootDir.path + IMAGE_FILE.path)
+        file.createWithContent(FILE_CONTENT)
+        assertThat(file.exists()).isTrue()
+
+        // act
+        val result = fileSystem.getRealPath(IMAGE_FILE.path)
+
+        // assert
+        assertThat(result).isEqualTo(Result.Success(file.path))
+    }
+
+    @Test
+    fun `getRealPath should return FileNotFoundException`() {
+        // arrange
+        val file = File(rootDir.path + IMAGE_FILE.path)
+        assertThat(file.exists()).isFalse()
+
+        // act
+        val model = fileSystem.getRealPath(DIRECTORY_FILE.path)
+
+        // assert
+        assertThat(model.isFailure).isTrue()
+        assertThat(model.getExceptionOrThrow()).isInstanceOf(FileNotFoundException::class.java)
     }
 
     companion object {

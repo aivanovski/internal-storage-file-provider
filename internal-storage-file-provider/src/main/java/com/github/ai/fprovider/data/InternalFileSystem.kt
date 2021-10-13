@@ -14,6 +14,15 @@ internal class InternalFileSystem(
     private val rootDirPath: String
 ) : FileSystem {
 
+    override fun getRealPath(path: String): Result<String> {
+        val file = File(rootDirPath + path)
+        if (!file.exists()) {
+            return Result.Failure(FileNotFoundException(file.path))
+        }
+
+        return Result.Success(file.path)
+    }
+
     override fun getFile(path: String): Result<FileModel> {
         val file = File(rootDirPath + path)
         if (!file.exists()) {

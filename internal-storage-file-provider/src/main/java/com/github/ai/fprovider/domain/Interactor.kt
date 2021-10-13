@@ -4,6 +4,7 @@ import android.net.Uri
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
+import com.github.ai.fprovider.domain.usecases.GetPathUseCase
 import com.github.ai.fprovider.entity.QueryType.DIRECTORY_LIST
 import com.github.ai.fprovider.entity.QueryType.FILE_INFO
 import com.github.ai.fprovider.entity.Result
@@ -15,7 +16,8 @@ internal class Interactor(
     private val projectionMapper: ProjectionMapper,
     private val mimeTypeUseCase: GetMimeTypeUseCase,
     private val fileInfoUseCase: GetFileInfoUseCase,
-    private val directoryListUseCase: GetDirectoryListUseCase
+    private val directoryListUseCase: GetDirectoryListUseCase,
+    private val pathUseCase: GetPathUseCase
 ) {
 
     fun getMimeType(uri: Uri): Result<String> {
@@ -23,6 +25,13 @@ internal class Interactor(
             ?: return Result.Failure(InvalidPathException())
 
         return mimeTypeUseCase.getMimeType(path)
+    }
+
+    fun getRealFilePath(uri: Uri): Result<String> {
+        val path = pathConverter.getPath(uri)
+            ?: return Result.Failure(InvalidPathException())
+
+        return pathUseCase.getRealPath(path)
     }
 
     fun query(uri: Uri, columns: List<String>): Result<Table> {
