@@ -11,7 +11,7 @@ import com.github.ai.fprovider.domain.FileModelFormatter
 import com.github.ai.fprovider.domain.Interactor
 import com.github.ai.fprovider.domain.MetaDataReader
 import com.github.ai.fprovider.domain.MimeTypeProvider
-import com.github.ai.fprovider.domain.PathConverter
+import com.github.ai.fprovider.domain.UriParser
 import com.github.ai.fprovider.domain.ProjectionMapper
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
@@ -42,7 +42,7 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         val authority = MetaDataReader().readAuthority(context)
 
         interactor = Interactor(
-            pathConverter = PathConverter(),
+            uriParser = UriParser(),
             projectionMapper = ProjectionMapper(),
             mimeTypeUseCase = GetMimeTypeUseCase(
                 fileSystem = fileSystem,

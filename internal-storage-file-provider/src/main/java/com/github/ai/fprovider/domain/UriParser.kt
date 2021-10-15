@@ -1,11 +1,20 @@
 package com.github.ai.fprovider.domain
 
 import android.net.Uri
+import com.github.ai.fprovider.entity.ParsedUri
 import com.github.ai.fprovider.entity.QueryType
 
-internal class PathConverter {
+internal class UriParser {
 
-    fun getQueryType(uri: Uri): QueryType? {
+    fun parse(uri: Uri): ParsedUri? {
+        val queryType = getQueryType(uri) ?: return null
+
+        val path = getPath(uri) ?: return null
+
+        return ParsedUri(queryType, path)
+    }
+
+    private fun getQueryType(uri: Uri): QueryType? {
         val path = uri.path ?: return null
 
         return if (path.endsWith("/*")) {
@@ -15,7 +24,7 @@ internal class PathConverter {
         }
     }
 
-    fun getPath(uri: Uri): String? {
+    private fun getPath(uri: Uri): String? {
         val path = uri.path
         if (path.isNullOrEmpty()) {
             return null
