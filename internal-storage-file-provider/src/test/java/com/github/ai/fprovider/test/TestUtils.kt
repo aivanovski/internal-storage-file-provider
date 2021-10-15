@@ -57,3 +57,11 @@ internal fun File.createWithContent(content: String) {
             close()
         }
 }
+
+fun createUri(
+    scheme: String = "content",
+    authority: String = TestData.AUTHORITY,
+    path: String
+): Uri {
+    return Uri.parse("$scheme://$authority$path")
+}

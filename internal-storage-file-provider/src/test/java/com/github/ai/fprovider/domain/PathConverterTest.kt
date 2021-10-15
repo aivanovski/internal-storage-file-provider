@@ -3,11 +3,17 @@ package com.github.ai.fprovider.domain
 import com.github.ai.fprovider.entity.QueryType
 import com.github.ai.fprovider.test.TestData.DIRECTORY_FILE
 import com.github.ai.fprovider.test.TestData.IMAGE_FILE
-import com.github.ai.fprovider.test.mockUri
+import com.github.ai.fprovider.test.createUri
+import com.github.ai.fprovider.test.toUri
 import com.github.ai.fprovider.utils.Constants.ROOT
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [28])
 class PathConverterTest {
 
     private val pathConverter = PathConverter()
@@ -15,9 +21,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for file`() {
         // arrange
-        val uri = mockUri(
-            path = IMAGE_FILE.path
-        )
+        val uri = IMAGE_FILE.toUri()
 
         // act
         val path = pathConverter.getPath(uri)
@@ -29,7 +33,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for directory`() {
         // arrange
-        val uri = mockUri(
+        val uri = createUri(
             path = "${DIRECTORY_FILE.path}/*"
         )
 
@@ -43,7 +47,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return path for root`() {
         // arrange
-        val uri = mockUri(
+        val uri = createUri(
             path = "/*"
         )
 
@@ -57,7 +61,7 @@ class PathConverterTest {
     @Test
     fun `getPath should return null`() {
         // arrange
-        val uri = mockUri(
+        val uri = createUri(
             path = ""
         )
 
@@ -71,7 +75,7 @@ class PathConverterTest {
     @Test
     fun `getQueryType should return type for file`() {
         // arrange
-        val uri = mockUri(
+        val uri = createUri(
             path = "/image.jpg"
         )
 
@@ -85,7 +89,7 @@ class PathConverterTest {
     @Test
     fun `getQueryType should return type for directory listing`() {
         // arrange
-        val uri = mockUri(
+        val uri = createUri(
             path = "/home/*"
         )
 
@@ -94,19 +98,5 @@ class PathConverterTest {
 
         // assert
         assertThat(queryType).isEqualTo(QueryType.DIRECTORY_LIST)
-    }
-
-    @Test
-    fun `getQueryType should return null`() {
-        // arrange
-        val uri = mockUri(
-            path = null
-        )
-
-        // act
-        val queryType = pathConverter.getQueryType(uri)
-
-        // assert
-        assertThat(queryType).isNull()
     }
 }
