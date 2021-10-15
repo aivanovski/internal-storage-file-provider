@@ -61,7 +61,12 @@ internal fun File.createWithContent(content: String) {
 fun createUri(
     scheme: String = "content",
     authority: String = TestData.AUTHORITY,
-    path: String
+    path: String,
+    authToken: String? = null
 ): Uri {
-    return Uri.parse("$scheme://$authority$path")
+    return if (authToken != null) {
+        Uri.parse("$scheme://$authority/$authToken$path")
+    } else {
+        Uri.parse("$scheme://$authority$path")
+    }
 }

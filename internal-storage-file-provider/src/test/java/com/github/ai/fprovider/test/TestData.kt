@@ -8,6 +8,7 @@ internal object TestData {
     const val IMAGE_MIME_TYPE = "image/jpeg"
     const val DIRECTORY_MIME_TYPE = MimeTypes.DIRECTORY
     const val AUTHORITY = "com.test.authority"
+    const val AUTH_TOKEN = "auth_token"
 
     val PARENT_FILE = FileModel(
         path = "/home",

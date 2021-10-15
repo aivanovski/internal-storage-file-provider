@@ -11,6 +11,8 @@ import com.github.ai.fprovider.entity.Result
 import com.github.ai.fprovider.entity.Table
 import com.github.ai.fprovider.entity.exception.InvalidPathException
 import com.github.ai.fprovider.entity.exception.InvalidQueryTypeException
+import com.github.ai.fprovider.test.TestData
+import com.github.ai.fprovider.test.TestData.AUTH_TOKEN
 import com.github.ai.fprovider.test.mockUri
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
@@ -40,7 +42,7 @@ class InteractorTest {
     fun `getMimeType should route to GetMimeTypeUseCase`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
         every { mimeTypeUseCase.getMimeType(PATH) }.returns(Result.Success(RESULT))
 
         // act
@@ -69,7 +71,7 @@ class InteractorTest {
     fun `getMimeType should return InvalidQueryTypeException`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH, AUTH_TOKEN))
 
         // act
         val mimeType = interactor.getMimeType(uri)
@@ -83,7 +85,7 @@ class InteractorTest {
     fun `query should return route to GetFileInfoUseCase`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
         every { projectionMapper.getProjectionFromColumns(ALL_COLUMNS) }.returns(ALL_PROJECTIONS)
         every { fileInfoUseCase.getFileInto(PATH, ALL_PROJECTIONS) }.returns(
             Result.Success(
@@ -103,7 +105,7 @@ class InteractorTest {
     fun `query should route to GetDirectoryListUseCase`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH, AUTH_TOKEN))
         every { projectionMapper.getProjectionFromColumns(ALL_COLUMNS) }.returns(ALL_PROJECTIONS)
         every { directoryListUseCase.getDirectoryList(PATH, ALL_PROJECTIONS) }.returns(
             Result.Success(
@@ -136,7 +138,7 @@ class InteractorTest {
     fun `getRealPath should return real file path`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
         every { pathUseCase.getRealPath(PATH) }.returns(Result.Success(REAL_PATH))
 
         // act
@@ -164,7 +166,7 @@ class InteractorTest {
     fun `getRealPath should return InvalidQueryTypeException`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH, AUTH_TOKEN))
 
         // act
         val result = interactor.getRealFilePath(uri)
@@ -178,7 +180,7 @@ class InteractorTest {
     fun `getRealPath should return error from GetPathUseCase`() {
         // arrange
         val uri = mockUri(path = PATH)
-        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH))
+        every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
         every { pathUseCase.getRealPath(PATH) }.returns(Result.Failure(FileNotFoundException()))
 
         // act
