@@ -44,6 +44,7 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         interactor = Interactor(
             uriParser = UriParser(),
             projectionMapper = ProjectionMapper(),
+            tokenManager = InternalStorageTokenManager(context),
             mimeTypeUseCase = GetMimeTypeUseCase(
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider
