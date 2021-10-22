@@ -69,7 +69,7 @@ fun FileListScreen_Loading() {
 @Composable
 fun FileListScreen_Error() {
     Preview(
-        state = ScreenState.error("Error text"),
+        state = ScreenState.error("Error text with detailed long message on the screen"),
         cells = emptyList()
     )
 }

@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,17 +8,21 @@ import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.data.entity.FilePath
 import com.github.ai.fprovider.demo.domain.ErrorInteractor
+import com.github.ai.fprovider.demo.domain.OnSettingsChangeListener
 import com.github.ai.fprovider.demo.domain.ResourceProvider
+import com.github.ai.fprovider.demo.domain.Settings
 import com.github.ai.fprovider.demo.domain.file_list.FileListInteractor
 import com.github.ai.fprovider.demo.extension.toFilePath
 import com.github.ai.fprovider.demo.extension.toPath
 import com.github.ai.fprovider.demo.extension.toUri
+import com.github.ai.fprovider.demo.presentation.Screens.SettingsScreen
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileListCellFactory
 import com.github.ai.fprovider.demo.utils.Event
+import com.github.ai.fprovider.demo.utils.StringUtils.EMPTY
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.launch
 
@@ -26,7 +31,8 @@ class FileListViewModel(
     private val cellFactory: FileListCellFactory,
     private val errorInteractor: ErrorInteractor,
     private val resourceProvider: ResourceProvider,
-    private val router: Router
+    private val router: Router,
+    private val settings: Settings
 ) : ViewModel() {
 
     val screenState = MutableLiveData(ScreenState.loading())
@@ -34,20 +40,38 @@ class FileListViewModel(
     val actionBarTitle = MutableLiveData(resourceProvider.getString(R.string.app_name))
     val isActionBarBackButtonVisible = MutableLiveData(false)
     val showToastMessageEvent = MutableLiveData<Event<String>>()
-    val openFileEvent = MutableLiveData<Event<FileEntity>>()
+    val openFileEvent = MutableLiveData<Event<Pair<FileEntity, Uri>>>()
 
     private var isExitOnBack = false
-    private var currentPath = FilePath(authority = AUTHORITY, path = "/*")
     private var parentDir: FileEntity? = null
     private var currentDir: FileEntity? = null
     private val parents = mutableListOf<FileEntity>()
+    private val settingsListener = OnSettingsChangeListener { onSettingsChanged(it) }
+    private var accessToken = settings.accessToken ?: EMPTY
+    private var currentPath = FilePath(
+        authority = AUTHORITY,
+        path = "/*",
+        accessToken = accessToken
+    )
+
+    init {
+        settings.registerListener(settingsListener)
+    }
+
+    override fun onCleared() {
+        settings.unregisterListener(settingsListener)
+    }
 
     fun loadData() {
         screenState.value = ScreenState.loading()
 
         viewModelScope.launch {
             if (currentDir == null) {
-                val getCurrentDir = interactor.getFile(currentPath.toFilePath())
+                val getCurrentDir = interactor.getFile(
+                    currentPath.toFilePath(
+                        accessToken = accessToken
+                    )
+                )
                 if (getCurrentDir.isSuccess) {
                     currentDir = getCurrentDir.getOrThrow()
                 } else {
@@ -109,6 +133,10 @@ class FileListViewModel(
         }
     }
 
+    fun onSettingsButtonClicked() {
+        router.navigateTo(SettingsScreen())
+    }
+
     private fun showError(error: Exception) {
         val message = errorInteractor.getMessage(error)
         screenState.value = ScreenState.error(message)
@@ -121,7 +149,12 @@ class FileListViewModel(
             file == parentDir -> onParentDirectoryClicked()
             file.isDirectory -> onDirectoryClicked(file)
             else -> {
-                openFileEvent.value = Event(file)
+                openFileEvent.value = Event(
+                    Pair(
+                        file,
+                        file.toPath(accessToken = accessToken).toUri()
+                    )
+                )
             }
         }
     }
@@ -158,12 +191,24 @@ class FileListViewModel(
         this.currentDir = currentDir
         this.parentDir = parentDir
 
-        currentPath = currentDir.toPath()
+        currentPath = currentDir.toPath(accessToken = accessToken)
         isActionBarBackButtonVisible.value = (parentDir != null)
         actionBarTitle.value = if (parentDir != null) {
             currentDir.name
         } else {
             resourceProvider.getString(R.string.app_name)
+        }
+    }
+
+    private fun onSettingsChanged(type: Settings.Type) {
+        when (type) {
+            Settings.Type.ACCESS_TOKEN -> {
+                accessToken = settings.accessToken ?: EMPTY
+                currentPath = currentPath.copy(
+                    accessToken = accessToken
+                )
+                loadData()
+            }
         }
     }
 

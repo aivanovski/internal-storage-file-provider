@@ -1,8 +1,11 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +18,6 @@ import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.extension.setupActionBar
 import com.github.ai.fprovider.demo.extension.showToastMessage
-import com.github.ai.fprovider.demo.extension.toPath
-import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.utils.EventObserver
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -24,6 +25,15 @@ class FileListFragment : Fragment() {
 
     private val viewModel: FileListViewModel by viewModel()
     private var backCallback: OnBackPressedCallback? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.file_list, menu)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +58,10 @@ class FileListFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 viewModel.onBackClicked()
+                true
+            }
+            R.id.menu_settings -> {
+                viewModel.onSettingsButtonClicked()
                 true
             }
             else -> {
@@ -91,8 +105,8 @@ class FileListFragment : Fragment() {
         viewModel.showToastMessageEvent.observe(viewLifecycleOwner, EventObserver {
             showToastMessage(it)
         })
-        viewModel.openFileEvent.observe(viewLifecycleOwner, EventObserver {
-            openFile(it)
+        viewModel.openFileEvent.observe(viewLifecycleOwner, EventObserver { (file, uri) ->
+            openFile(file, uri)
         })
     }
 
@@ -109,9 +123,7 @@ class FileListFragment : Fragment() {
         }
     }
 
-    private fun openFile(file: FileEntity) {
-        val uri = file.toPath().toUri()
-
+    private fun openFile(file: FileEntity, uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW)
             .apply {
                 if (!file.mimeType.isNullOrBlank()) {

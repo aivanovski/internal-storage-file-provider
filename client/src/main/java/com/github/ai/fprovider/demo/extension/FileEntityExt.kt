@@ -4,7 +4,7 @@ import android.net.Uri
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.data.entity.FilePath
 
-fun FileEntity.toPath(): FilePath {
+fun FileEntity.toPath(accessToken: String): FilePath {
     val uri = Uri.parse(path)
 
     return FilePath(
@@ -13,6 +13,7 @@ fun FileEntity.toPath(): FilePath {
             "${uri.path}/*"
         } else {
             uri.path ?: throw IllegalStateException()
-        }
+        },
+        accessToken = accessToken
     )
 }

@@ -94,6 +94,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:$lifecycleVersion"
     implementation "androidx.activity:activity-ktx:$activityKtxVersion"
+    implementation "androidx.preference:preference-ktx:$preferenceLibrary"
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"

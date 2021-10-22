@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -32,6 +33,7 @@ import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.LOAD
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCell
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.theme.dividerColor
+import com.github.ai.fprovider.demo.utils.StringUtils
 
 @Composable
 fun FileListScreen(viewModel: FileListViewModel) {
@@ -79,7 +81,7 @@ fun FileListLayout(
                                 .defaultMinSize(minHeight = 96.dp)
                         ) {
                             Text(
-                                text = state.errorText ?: "",
+                                text = state.errorText ?: StringUtils.EMPTY,
                                 fontSize = 24.sp,
                                 color = Color(0xFF_C0_00_20),
                                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp)
@@ -108,7 +110,7 @@ fun FileListLayout(
             }
             EMPTY -> {
                 Text(
-                    text = state.emptyText ?: "",
+                    text = state.emptyText ?: StringUtils.EMPTY,
                     fontSize = 24.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.SemiBold,
@@ -124,15 +126,18 @@ fun FileListLayout(
             }
             ERROR -> {
                 Text(
-                    text = state.errorText ?: "",
+                    text = state.errorText ?: StringUtils.EMPTY,
                     fontSize = 24.sp,
                     color = Color(0xFF_C0_00_20),
-                    modifier = Modifier.constrainAs(errorText) {
-                        start.linkTo(parent.start, margin = 16.dp)
-                        end.linkTo(parent.end, margin = 16.dp)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .constrainAs(errorText) {
+                            start.linkTo(parent.start, margin = 16.dp)
+                            end.linkTo(parent.end, margin = 16.dp)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
                 )
             }
         }
