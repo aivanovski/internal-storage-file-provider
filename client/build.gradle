@@ -34,10 +34,17 @@ android {
     }
 
     signingConfigs {
+        debug {
+            storeFile file("../keys/debug.keystore")
+        }
+        release {
+            // TODO
+        }
     }
 
     buildTypes {
         debug {
+            signingConfig signingConfigs.debug
             debuggable true
             minifyEnabled false
         }
