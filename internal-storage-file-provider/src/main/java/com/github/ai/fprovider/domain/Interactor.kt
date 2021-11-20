@@ -1,7 +1,7 @@
 package com.github.ai.fprovider.domain
 
 import android.net.Uri
-import com.github.ai.fprovider.InternalStorageTokenManager
+import com.github.ai.fprovider.domain.usecases.CheckAuthTokenUseCase
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
@@ -17,7 +17,7 @@ import com.github.ai.fprovider.entity.exception.InvalidQueryTypeException
 internal class Interactor(
     private val uriParser: UriParser,
     private val projectionMapper: ProjectionMapper,
-    private val tokenManager: InternalStorageTokenManager,
+    private val checkTokenUseCase: CheckAuthTokenUseCase,
     private val mimeTypeUseCase: GetMimeTypeUseCase,
     private val fileInfoUseCase: GetFileInfoUseCase,
     private val directoryListUseCase: GetDirectoryListUseCase,
@@ -32,7 +32,7 @@ internal class Interactor(
             return Result.Failure(InvalidQueryTypeException())
         }
 
-        if (!tokenManager.isTokenValid(data.authToken)) {
+        if (!checkTokenUseCase.isPathAccessible(data.authToken, data.path)) {
             return Result.Failure(AuthFailedException())
         }
 
@@ -47,7 +47,7 @@ internal class Interactor(
             return Result.Failure(InvalidQueryTypeException())
         }
 
-        if (!tokenManager.isTokenValid(data.authToken)) {
+        if (!checkTokenUseCase.isPathAccessible(data.authToken, data.path)) {
             return Result.Failure(AuthFailedException())
         }
 
@@ -58,13 +58,13 @@ internal class Interactor(
         val data = uriParser.parse(uri)
             ?: return Result.Failure(InvalidPathException())
 
-        if (!tokenManager.isTokenValid(data.authToken)) {
+        if (!checkTokenUseCase.isPathAccessible(data.authToken, data.path)) {
             return Result.Failure(AuthFailedException())
         }
 
         val projection = projectionMapper.getProjectionFromColumns(columns)
 
-        return when(data.queryType) {
+        return when (data.queryType) {
             FILE_INFO -> fileInfoUseCase.getFileInto(data.path, projection)
             DIRECTORY_LIST -> directoryListUseCase.getDirectoryList(data.path, projection)
         }

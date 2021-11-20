@@ -1,6 +1,6 @@
 package com.github.ai.fprovider.domain
 
-import com.github.ai.fprovider.InternalStorageTokenManager
+import com.github.ai.fprovider.domain.usecases.CheckAuthTokenUseCase
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
@@ -30,11 +30,11 @@ class InteractorTest {
     private val fileInfoUseCase: GetFileInfoUseCase = mockk()
     private val directoryListUseCase: GetDirectoryListUseCase = mockk()
     private val pathUseCase: GetPathUseCase = mockk()
-    private val tokenManager: InternalStorageTokenManager = mockk()
+    private val checkTokenUseCase: CheckAuthTokenUseCase = mockk()
     private val interactor = Interactor(
         uriParser = uriParser,
         projectionMapper = projectionMapper,
-        tokenManager = tokenManager,
+        checkTokenUseCase = checkTokenUseCase,
         mimeTypeUseCase = mimeTypeUseCase,
         fileInfoUseCase = fileInfoUseCase,
         directoryListUseCase = directoryListUseCase,
@@ -46,7 +46,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(true)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(true)
         every { mimeTypeUseCase.getMimeType(PATH) }.returns(Result.Success(RESULT))
 
         // act
@@ -90,7 +90,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(false)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(false)
 
         // act
         val mimeType = interactor.getMimeType(uri)
@@ -105,7 +105,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(true)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(true)
         every { projectionMapper.getProjectionFromColumns(ALL_COLUMNS) }.returns(ALL_PROJECTIONS)
         every { fileInfoUseCase.getFileInto(PATH, ALL_PROJECTIONS) }.returns(
             Result.Success(
@@ -126,7 +126,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.DIRECTORY_LIST, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(true)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(true)
         every { projectionMapper.getProjectionFromColumns(ALL_COLUMNS) }.returns(ALL_PROJECTIONS)
         every { directoryListUseCase.getDirectoryList(PATH, ALL_PROJECTIONS) }.returns(
             Result.Success(
@@ -160,7 +160,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(false)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(false)
 
         // act
         val result = interactor.query(uri, ALL_COLUMNS)
@@ -175,7 +175,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(true)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(true)
         every { pathUseCase.getRealPath(PATH) }.returns(Result.Success(REAL_PATH))
 
         // act
@@ -218,7 +218,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(true)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(true)
         every { pathUseCase.getRealPath(PATH) }.returns(Result.Failure(FileNotFoundException()))
 
         // act
@@ -234,7 +234,7 @@ class InteractorTest {
         // arrange
         val uri = mockUri(path = PATH)
         every { uriParser.parse(uri) }.returns(ParsedUri(QueryType.FILE_INFO, PATH, AUTH_TOKEN))
-        every { tokenManager.isTokenValid(AUTH_TOKEN) }.returns(false)
+        every { checkTokenUseCase.isPathAccessible(AUTH_TOKEN, PATH) }.returns(false)
 
         // act
         val result = interactor.getRealFilePath(uri)

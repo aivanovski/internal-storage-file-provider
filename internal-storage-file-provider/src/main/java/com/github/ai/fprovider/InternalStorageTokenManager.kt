@@ -1,37 +1,49 @@
 package com.github.ai.fprovider
 
 import android.content.Context
+import com.github.ai.fprovider.data.dao.TokenDao
+import com.github.ai.fprovider.data.dao.TokenDaoImpl
+import com.github.ai.fprovider.data.serialization.TokenAndPathDeserializer
+import com.github.ai.fprovider.data.serialization.TokenAndPathSerializer
+import com.github.ai.fprovider.domain.AuthTokenValidator
+import com.github.ai.fprovider.entity.TokenAndPath
 
-class InternalStorageTokenManager(context: Context) {
+class InternalStorageTokenManager internal constructor(
+    private val tokenDao: TokenDao,
+    private val tokenValidator: AuthTokenValidator
+) {
 
-    private val preferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+    fun addToken(token: String, rootPath: String) {
+        if (!tokenValidator.isTokenValid(token)) {
+            throw IllegalArgumentException()
+        }
 
-    fun addToken(token: String) {
-        val allTokens = readAll()
-        save(allTokens + token)
+        if (rootPath.isEmpty()) {
+            throw IllegalArgumentException()
+        }
+
+        tokenDao.add(
+            TokenAndPath(
+                authToken = token,
+                rootPath = rootPath
+            )
+        )
     }
 
     fun removeAllTokens() {
-        save(emptySet())
-    }
-
-    internal fun isTokenValid(token: String): Boolean {
-        return readAll().contains(token)
-    }
-
-    private fun readAll(): Set<String> {
-        return preferences.getStringSet(KEY_ALL_TOKENS, null) ?: emptySet()
-    }
-
-    private fun save(tokens: Set<String>) {
-        preferences.edit().apply {
-            putStringSet(KEY_ALL_TOKENS, tokens)
-            apply()
-        }
+        tokenDao.removeAll()
     }
 
     companion object {
-        internal const val KEY_ALL_TOKENS = "allTokens"
-        internal const val SHARED_PREFS_NAME = "internal-storage-file-provider"
+        fun from(context: Context): InternalStorageTokenManager {
+            return InternalStorageTokenManager(
+                tokenDao = TokenDaoImpl(
+                    context,
+                    TokenAndPathSerializer(),
+                    TokenAndPathDeserializer()
+                ),
+                tokenValidator = AuthTokenValidator()
+            )
+        }
     }
 }

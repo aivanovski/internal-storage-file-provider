@@ -1,74 +1,73 @@
 package com.github.ai.fprovider
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
-import com.github.ai.fprovider.InternalStorageTokenManager.Companion.KEY_ALL_TOKENS
-import com.github.ai.fprovider.InternalStorageTokenManager.Companion.SHARED_PREFS_NAME
-import com.google.common.truth.Truth.assertThat
-import org.junit.Before
+import com.github.ai.fprovider.data.dao.TokenDao
+import com.github.ai.fprovider.domain.AuthTokenValidator
+import com.github.ai.fprovider.entity.TokenAndPath
+import com.github.ai.fprovider.test.TestData.INVALID_TOKEN
+import com.github.ai.fprovider.test.TestData.VALID_TOKEN
+import com.github.ai.fprovider.utils.Constants.EMPTY
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28])
 class InternalStorageTokenManagerTest {
 
-    private lateinit var tokenManager: InternalStorageTokenManager
-    private lateinit var context: Context
-    private lateinit var preferences: SharedPreferences
-
-    @Before
-    fun setUp() {
-        val context = Robolectric
-            .buildActivity(AppCompatActivity::class.java)
-            .get() as Context
-
-        this.context = context
-        this.preferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-        tokenManager = InternalStorageTokenManager(context)
-    }
+    private val tokenDao: TokenDao = mockk()
+    private val tokenValidator: AuthTokenValidator = mockk()
+    private val tokenManager = InternalStorageTokenManager(
+        tokenDao = tokenDao,
+        tokenValidator = tokenValidator
+    )
 
     @Test
-    fun `addToken should store token`() {
+    fun `addToken should call dao`() {
         // arrange
-        assertThat(preferences.getStringSet(KEY_ALL_TOKENS, null)).isNull()
+        val token = TokenAndPath(VALID_TOKEN, PATH)
+        every { tokenDao.add(token) }.returns(Unit)
+        every { tokenValidator.isTokenValid(VALID_TOKEN) }.returns(true)
 
         // act
-        tokenManager.addToken(TOKEN)
+        tokenManager.addToken(VALID_TOKEN, PATH)
 
         // assert
-        assertThat(preferences.getStringSet(KEY_ALL_TOKENS, null)).isEqualTo(setOf(TOKEN))
+        verify { tokenDao.add(token) }
+        confirmVerified(tokenDao)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `addToken should return IllegalArgumentException if token is invalid`() {
+        // arrange
+        every { tokenValidator.isTokenValid(INVALID_TOKEN) }.returns(false)
+
+        // act
+        tokenManager.addToken(INVALID_TOKEN, PATH)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `addToken should return IllegalArgumentException if path is invalid`() {
+        // arrange
+        every { tokenValidator.isTokenValid(VALID_TOKEN) }.returns(false)
+
+        // act
+        tokenManager.addToken(VALID_TOKEN, EMPTY)
     }
 
     @Test
-    fun `removeAllTokens should remove all tokens`() {
+    fun `removeAllTokens should call dao`() {
         // arrange
-        tokenManager.addToken(TOKEN)
-        assertThat(preferences.getStringSet(KEY_ALL_TOKENS, null)).isEqualTo(setOf(TOKEN))
+        every { tokenDao.removeAll() }.returns(Unit)
 
         // act
         tokenManager.removeAllTokens()
 
         // assert
-        assertThat(preferences.getStringSet(KEY_ALL_TOKENS, null)).isEqualTo(emptySet<String>())
-    }
-
-    @Test
-    fun `isTokenValid should return true`() {
-        tokenManager.addToken(TOKEN)
-        assertThat(tokenManager.isTokenValid(TOKEN)).isTrue()
-    }
-
-    @Test
-    fun `isTokenValid should return false`() {
-        assertThat(tokenManager.isTokenValid(TOKEN)).isFalse()
+        verify { tokenDao.removeAll() }
+        confirmVerified(tokenDao)
     }
 
     companion object {
-        private const val TOKEN = "token-token-token-token"
+        private const val PATH = "path"
     }
 }

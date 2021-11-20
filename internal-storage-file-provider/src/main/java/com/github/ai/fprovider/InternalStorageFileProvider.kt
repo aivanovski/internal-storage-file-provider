@@ -7,12 +7,16 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import com.github.ai.fprovider.data.InternalFileSystem
+import com.github.ai.fprovider.data.dao.TokenDaoImpl
+import com.github.ai.fprovider.data.serialization.TokenAndPathDeserializer
+import com.github.ai.fprovider.data.serialization.TokenAndPathSerializer
 import com.github.ai.fprovider.domain.FileModelFormatter
 import com.github.ai.fprovider.domain.Interactor
 import com.github.ai.fprovider.domain.MetaDataReader
 import com.github.ai.fprovider.domain.MimeTypeProvider
-import com.github.ai.fprovider.domain.UriParser
 import com.github.ai.fprovider.domain.ProjectionMapper
+import com.github.ai.fprovider.domain.UriParser
+import com.github.ai.fprovider.domain.usecases.CheckAuthTokenUseCase
 import com.github.ai.fprovider.domain.usecases.GetDirectoryListUseCase
 import com.github.ai.fprovider.domain.usecases.GetFileInfoUseCase
 import com.github.ai.fprovider.domain.usecases.GetMimeTypeUseCase
@@ -40,11 +44,16 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         val mimeTypeProvider = MimeTypeProvider()
         val fileModelFormatter = FileModelFormatter()
         val authority = MetaDataReader().readAuthority(context)
+        val tokenDao = TokenDaoImpl(
+            context = context,
+            serializer = TokenAndPathSerializer(),
+            deserializer = TokenAndPathDeserializer()
+        )
 
         interactor = Interactor(
             uriParser = UriParser(),
             projectionMapper = ProjectionMapper(),
-            tokenManager = InternalStorageTokenManager(context),
+            checkTokenUseCase = CheckAuthTokenUseCase(tokenDao),
             mimeTypeUseCase = GetMimeTypeUseCase(
                 fileSystem = fileSystem,
                 mimeTypeProvider = mimeTypeProvider
