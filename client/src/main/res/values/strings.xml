@@ -11,5 +11,6 @@
     <string name="access_token_summary">Current value: %s</string>
     <string name="not_specified">Not specified</string>
     <string name="root_path_title">Root directory path</string>
+    <string name="authority_title">Content provider authority</string>
 
 </resources>

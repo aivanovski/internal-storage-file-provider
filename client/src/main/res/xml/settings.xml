@@ -10,4 +10,8 @@
         app:key="@string/pref_access_token"
         app:title="@string/access_token_title" />
 
+    <androidx.preference.EditTextPreference
+        app:key="@string/pref_content_provider_authority"
+        app:title="@string/authority_title" />
+
 </PreferenceScreen>

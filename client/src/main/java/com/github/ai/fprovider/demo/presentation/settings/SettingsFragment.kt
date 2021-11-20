@@ -6,14 +6,17 @@ import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.github.ai.fprovider.demo.R
+import com.github.ai.fprovider.demo.domain.Settings
 import com.github.ai.fprovider.demo.extension.setupActionBar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private val viewModel: SettingsViewModel by viewModel()
+
     private lateinit var accessTokenPref: EditTextPreference
     private lateinit var rootPathPref: EditTextPreference
+    private lateinit var authorityPref: EditTextPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +45,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accessTokenPref = findPreference(getString(R.string.pref_access_token))
+        accessTokenPref = findPreference(getString(Settings.Type.ACCESS_TOKEN.keyResId))
             ?: throw IllegalStateException()
 
-        rootPathPref = findPreference(getString(R.string.pref_root_path))
+        rootPathPref = findPreference(getString(Settings.Type.ROOT_PATH.keyResId))
+            ?: throw IllegalStateException()
+
+        authorityPref = findPreference(getString(Settings.Type.CONTENT_PROVIDER_AUTHORITY.keyResId))
             ?: throw IllegalStateException()
 
         viewModel.accessTokenDescription.observe(viewLifecycleOwner) {
@@ -53,6 +59,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         viewModel.rootPathDescription.observe(viewLifecycleOwner) {
             rootPathPref.summary = it
+        }
+        viewModel.authorityDescription.observe(viewLifecycleOwner) {
+            authorityPref.summary = it
         }
     }
 

@@ -16,6 +16,7 @@ class SettingsViewModel(
 
     val accessTokenDescription = MutableLiveData(formatAccessTokenDescription())
     val rootPathDescription = MutableLiveData(formatRootPathDescription())
+    val authorityDescription = MutableLiveData(formatAuthorityDescription())
 
     private val settingsListener = OnSettingsChangeListener { onSettingsChanged(it) }
 
@@ -39,13 +40,16 @@ class SettingsViewModel(
             Settings.Type.ROOT_PATH -> {
                 rootPathDescription.value = formatRootPathDescription()
             }
+            Settings.Type.CONTENT_PROVIDER_AUTHORITY -> {
+                authorityDescription.value = formatAuthorityDescription()
+            }
         }
     }
 
     private fun formatAccessTokenDescription(): String {
         val accessToken = settings.accessToken
         return if (accessToken != null) {
-            resourceProvider.getString(R.string.access_token_title, accessToken)
+            resourceProvider.getString(R.string.access_token_summary, accessToken)
         } else {
             resourceProvider.getString(R.string.not_specified)
         }
@@ -54,5 +58,14 @@ class SettingsViewModel(
     private fun formatRootPathDescription(): String {
         val rootPath = settings.rootPath
         return rootPath ?: resourceProvider.getString(R.string.not_specified)
+    }
+
+    private fun formatAuthorityDescription(): String {
+        val authority = settings.contentProviderAuthority
+        return if (authority.isBlank()) {
+            resourceProvider.getString(R.string.not_specified)
+        } else {
+            authority
+        }
     }
 }

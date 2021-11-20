@@ -47,11 +47,10 @@ class FileListViewModel(
     private var currentDir: FileEntity? = null
     private val parents = mutableListOf<FileEntity>()
     private val settingsListener = OnSettingsChangeListener { onSettingsChanged(it) }
-    private var accessToken = settings.accessToken ?: EMPTY
     private var currentPath = FilePath(
-        authority = AUTHORITY,
+        authority = readContentProviderAuthority(),
         path = readRootPath(),
-        accessToken = accessToken
+        accessToken = readAccessToken()
     )
 
     init {
@@ -69,7 +68,7 @@ class FileListViewModel(
             if (currentDir == null) {
                 val getCurrentDir = interactor.getFile(
                     currentPath.toFilePath(
-                        accessToken = accessToken
+                        accessToken = readAccessToken()
                     )
                 )
                 if (getCurrentDir.isSuccess) {
@@ -152,7 +151,7 @@ class FileListViewModel(
                 openFileEvent.value = Event(
                     Pair(
                         file,
-                        file.toPath(accessToken = accessToken).toUri()
+                        file.toPath(accessToken = readAccessToken()).toUri()
                     )
                 )
             }
@@ -191,7 +190,7 @@ class FileListViewModel(
         this.currentDir = currentDir
         this.parentDir = parentDir
 
-        currentPath = currentDir.toPath(accessToken = accessToken)
+        currentPath = currentDir.toPath(accessToken = readAccessToken())
         isActionBarBackButtonVisible.value = (parentDir != null)
         actionBarTitle.value = if (parentDir != null) {
             currentDir.name
@@ -203,9 +202,8 @@ class FileListViewModel(
     private fun onSettingsChanged(type: Settings.Type) {
         when (type) {
             Settings.Type.ACCESS_TOKEN -> {
-                accessToken = settings.accessToken ?: EMPTY
                 currentPath = currentPath.copy(
-                    accessToken = accessToken
+                    accessToken = readAccessToken()
                 )
                 loadData()
             }
@@ -215,6 +213,12 @@ class FileListViewModel(
                         path = readRootPath()
                     )
                 }
+                loadData()
+            }
+            Settings.Type.CONTENT_PROVIDER_AUTHORITY -> {
+                currentPath = currentPath.copy(
+                    authority = readContentProviderAuthority()
+                )
                 loadData()
             }
         }
@@ -238,7 +242,11 @@ class FileListViewModel(
         }
     }
 
-    companion object {
-        private const val AUTHORITY = "com.github.ai.fprovider.demo.files"
+    private fun readContentProviderAuthority(): String {
+        return settings.contentProviderAuthority
+    }
+
+    private fun readAccessToken(): String {
+        return settings.accessToken ?: EMPTY
     }
 }
