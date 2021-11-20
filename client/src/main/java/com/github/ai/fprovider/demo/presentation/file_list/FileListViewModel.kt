@@ -50,7 +50,7 @@ class FileListViewModel(
     private var accessToken = settings.accessToken ?: EMPTY
     private var currentPath = FilePath(
         authority = AUTHORITY,
-        path = "/*",
+        path = readRootPath(),
         accessToken = accessToken
     )
 
@@ -209,6 +209,14 @@ class FileListViewModel(
                 )
                 loadData()
             }
+            Settings.Type.ROOT_PATH -> {
+                if (parents.isEmpty()) {
+                    currentPath = currentPath.copy(
+                        path = readRootPath()
+                    )
+                }
+                loadData()
+            }
         }
     }
 
@@ -218,6 +226,16 @@ class FileListViewModel(
 
     private fun goBack() {
         onParentDirectoryClicked()
+    }
+
+    private fun readRootPath(): String {
+        val rootPath = settings.rootPath
+        return when {
+            rootPath.isNullOrBlank() -> "/*"
+            rootPath.endsWith("/") -> "$rootPath*"
+            rootPath.endsWith("/*") -> rootPath
+            else -> "$rootPath/*"
+        }
     }
 
     companion object {

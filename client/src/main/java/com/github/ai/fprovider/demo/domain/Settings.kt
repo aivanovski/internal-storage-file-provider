@@ -5,6 +5,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import androidx.annotation.StringRes
 import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.domain.Settings.Type.ACCESS_TOKEN
+import com.github.ai.fprovider.demo.domain.Settings.Type.ROOT_PATH
 import java.util.concurrent.CopyOnWriteArrayList
 
 class Settings(
@@ -18,7 +19,14 @@ class Settings(
             setString(keyAccessToken, value)
         }
 
+    var rootPath: String?
+        get() = getNonEmptyString(keyRootPath, null)
+        set(value) {
+            setString(keyRootPath, value)
+        }
+
     private val keyAccessToken = ACCESS_TOKEN.getKey(resourceProvider)
+    private val keyRootPath = ROOT_PATH.getKey(resourceProvider)
     private val listeners = CopyOnWriteArrayList<OnSettingsChangeListener>()
     private val preferencesListener = OnSharedPreferenceChangeListener { _, key ->
         onPreferenceChanged(key)
@@ -71,9 +79,8 @@ class Settings(
         return resourceProvider.getString(this.keyResId)
     }
 
-    enum class Type(
-        @StringRes val keyResId: Int
-    ) {
-        ACCESS_TOKEN(R.string.pref_access_token)
+    enum class Type(@StringRes val keyResId: Int) {
+        ACCESS_TOKEN(R.string.pref_access_token),
+        ROOT_PATH(R.string.pref_root_path)
     }
 }

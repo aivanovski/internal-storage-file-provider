@@ -7,8 +7,9 @@
 
     <!-- Settings -->
     <string name="settings">Settings</string>
-    <string name="access_token">Access token</string>
-    <string name="current_value_with_str">Current value: %s</string>
+    <string name="access_token_title">Access token</string>
+    <string name="access_token_summary">Current value: %s</string>
     <string name="not_specified">Not specified</string>
+    <string name="root_path_title">Root directory path</string>
 
 </resources>

@@ -15,6 +15,7 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val accessTokenDescription = MutableLiveData(formatAccessTokenDescription())
+    val rootPathDescription = MutableLiveData(formatRootPathDescription())
 
     private val settingsListener = OnSettingsChangeListener { onSettingsChanged(it) }
 
@@ -35,15 +36,23 @@ class SettingsViewModel(
             Settings.Type.ACCESS_TOKEN -> {
                 accessTokenDescription.value = formatAccessTokenDescription()
             }
+            Settings.Type.ROOT_PATH -> {
+                rootPathDescription.value = formatRootPathDescription()
+            }
         }
     }
 
     private fun formatAccessTokenDescription(): String {
         val accessToken = settings.accessToken
         return if (accessToken != null) {
-            resourceProvider.getString(R.string.current_value_with_str, accessToken)
+            resourceProvider.getString(R.string.access_token_title, accessToken)
         } else {
             resourceProvider.getString(R.string.not_specified)
         }
+    }
+
+    private fun formatRootPathDescription(): String {
+        val rootPath = settings.rootPath
+        return rootPath ?: resourceProvider.getString(R.string.not_specified)
     }
 }

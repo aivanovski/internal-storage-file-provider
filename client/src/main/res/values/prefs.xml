@@ -2,4 +2,5 @@
 <resources>
     <string name="preferences_name" translatable="false">client</string>
     <string name="pref_access_token" translatable="false">accessToken</string>
+    <string name="pref_root_path" translatable="false">rootPath</string>
 </resources>

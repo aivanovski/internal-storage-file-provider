@@ -13,6 +13,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val viewModel: SettingsViewModel by viewModel()
     private lateinit var accessTokenPref: EditTextPreference
+    private lateinit var rootPathPref: EditTextPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,8 +45,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         accessTokenPref = findPreference(getString(R.string.pref_access_token))
             ?: throw IllegalStateException()
 
+        rootPathPref = findPreference(getString(R.string.pref_root_path))
+            ?: throw IllegalStateException()
+
         viewModel.accessTokenDescription.observe(viewLifecycleOwner) {
             accessTokenPref.summary = it
+        }
+        viewModel.rootPathDescription.observe(viewLifecycleOwner) {
+            rootPathPref.summary = it
         }
     }
 
