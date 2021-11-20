@@ -36,7 +36,7 @@ class MainViewModel(
             tokenManager.removeAllTokens()
 
             val newToken = newToken()
-            tokenManager.addToken(newToken)
+            tokenManager.addToken(newToken, DEFAULT_PATH_TO_FILES)
 
             _accessToken.value = newToken
             _isProgressVisible.value = false
@@ -52,6 +52,10 @@ class MainViewModel(
         }
 
         return token.toString()
+    }
+
+    companion object {
+        private const val DEFAULT_PATH_TO_FILES = "/file/home"
     }
 }
 

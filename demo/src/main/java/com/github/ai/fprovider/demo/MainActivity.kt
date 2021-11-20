@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         factoryProducer = {
             MainViewModelFactory(
                 FileSystemInteractor(applicationContext),
-                InternalStorageTokenManager(applicationContext)
+                InternalStorageTokenManager.from(applicationContext)
             )
         }
     )
