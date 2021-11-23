@@ -30,7 +30,7 @@ import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.EMPTY
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.ERROR
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.LOADING
-import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCell
+import com.github.ai.fprovider.demo.presentation.file_list.cells.view.FileCell
 import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.theme.dividerColor
 import com.github.ai.fprovider.demo.utils.StringUtils

@@ -1,4 +1,4 @@
-package com.github.ai.fprovider.demo.presentation.file_list.cells
+package com.github.ai.fprovider.demo.presentation.file_list.cells.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
