@@ -105,8 +105,8 @@ class FileListFragment : Fragment() {
         viewModel.showToastMessageEvent.observe(viewLifecycleOwner, EventObserver {
             showToastMessage(it)
         })
-        viewModel.openFileEvent.observe(viewLifecycleOwner, EventObserver { (file, uri) ->
-            openFile(file, uri)
+        viewModel.openFileEvent.observe(viewLifecycleOwner, EventObserver { data ->
+            openFile(data.uri, data.mimeType)
         })
     }
 
@@ -123,14 +123,10 @@ class FileListFragment : Fragment() {
         }
     }
 
-    private fun openFile(file: FileEntity, uri: Uri) {
+    private fun openFile(uri: Uri, mimeType: String) {
         val intent = Intent(Intent.ACTION_VIEW)
             .apply {
-                if (!file.mimeType.isNullOrBlank()) {
-                    setDataAndType(uri, file.mimeType)
-                } else {
-                    data = uri
-                }
+                setDataAndType(uri, mimeType)
             }
         startActivity(intent)
     }

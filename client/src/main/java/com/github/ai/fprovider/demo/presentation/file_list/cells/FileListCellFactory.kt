@@ -3,6 +3,7 @@ package com.github.ai.fprovider.demo.presentation.file_list.cells
 import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.domain.ResourceProvider
+import com.github.ai.fprovider.demo.utils.StringUtils
 
 class FileListCellFactory(
     private val resourceProvider: ResourceProvider
@@ -43,7 +44,8 @@ class FileListCellFactory(
             val description = when {
                 file == parent -> resourceProvider.getString(R.string.parent_folder)
                 file.isDirectory -> resourceProvider.getString(R.string.folder)
-                else -> file.size.toString()
+                file.size != null -> StringUtils.formatFileSize(file.size)
+                else -> "-"
             }
 
             FileCellModel(

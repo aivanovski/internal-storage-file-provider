@@ -21,6 +21,7 @@ import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileListCellFactory
+import com.github.ai.fprovider.demo.presentation.file_list.model.OpenFileData
 import com.github.ai.fprovider.demo.utils.Event
 import com.github.ai.fprovider.demo.utils.StringUtils.EMPTY
 import com.github.terrakok.cicerone.Router
@@ -40,7 +41,7 @@ class FileListViewModel(
     val actionBarTitle = MutableLiveData(resourceProvider.getString(R.string.app_name))
     val isActionBarBackButtonVisible = MutableLiveData(false)
     val showToastMessageEvent = MutableLiveData<Event<String>>()
-    val openFileEvent = MutableLiveData<Event<Pair<FileEntity, Uri>>>()
+    val openFileEvent = MutableLiveData<Event<OpenFileData>>()
 
     private var isExitOnBack = false
     private var parentDir: FileEntity? = null
@@ -149,12 +150,20 @@ class FileListViewModel(
             file.isDirectory -> onDirectoryClicked(file)
             else -> {
                 openFileEvent.value = Event(
-                    Pair(
-                        file,
-                        file.toPath(accessToken = readAccessToken()).toUri()
+                    OpenFileData(
+                        uri = file.toPath(accessToken = readAccessToken()).toUri(),
+                        mimeType = getMimeTypeForFile(file)
                     )
                 )
             }
+        }
+    }
+
+    private fun getMimeTypeForFile(file: FileEntity): String {
+        return if (file.mimeType.isNullOrBlank()) {
+            MIME_TYPE_TEXT
+        } else {
+            file.mimeType
         }
     }
 
@@ -248,5 +257,9 @@ class FileListViewModel(
 
     private fun readAccessToken(): String {
         return settings.accessToken ?: EMPTY
+    }
+
+    companion object {
+        private const val MIME_TYPE_TEXT = "text/plain"
     }
 }

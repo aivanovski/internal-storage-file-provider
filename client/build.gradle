@@ -73,6 +73,12 @@ android {
 dependencies {
     implementation project(":internal-storage-file-provider")
 
+    // Test dependencies
+    testImplementation "junit:junit:$jUnitVersion"
+    testImplementation "io.mockk:mockk:$mockkVersion"
+    testImplementation "com.google.truth:truth:$truthVersion"
+    testImplementation "androidx.appcompat:appcompat:$appCompatVersion"
+
     // MultiDex
     implementation "androidx.multidex:multidex:$multidexVersion"
 
