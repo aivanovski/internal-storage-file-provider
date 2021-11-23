@@ -5,8 +5,11 @@ ext {
             compileSdk: 30
     ]
     version = [
-            versionCode: 3,
-            versionName: "0.3.0"
+            libraryVersionCode: 4,
+            libraryVersionName: "0.4.0",
+
+            clientVersionCode : 4,
+            clientVersionName : "0.4.0"
     ]
 
     kotlinCompilerApiVersion = '1.0.1'

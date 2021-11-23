@@ -13,8 +13,8 @@ android {
         applicationId 'com.github.ai.fprovider.client'
         minSdkVersion ext.android.minSdk
         targetSdkVersion ext.android.targetSdk
-        versionCode ext.version.versionCode
-        versionName ext.version.versionName
+        versionCode ext.version.clientVersionCode
+        versionName ext.version.clientVersionName
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary true
         multiDexEnabled true
