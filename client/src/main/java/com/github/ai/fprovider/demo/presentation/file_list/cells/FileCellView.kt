@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
@@ -72,6 +73,8 @@ fun FileCell(viewModel: FileCellViewModel) {
             text = viewModel.model.name,
             fontSize = 18.sp,
             color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .constrainAs(title) {
                     top.linkTo(parent.top)
@@ -86,6 +89,8 @@ fun FileCell(viewModel: FileCellViewModel) {
             text = viewModel.model.description,
             fontSize = 14.sp,
             color = Color.Gray,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .constrainAs(description) {
                     top.linkTo(title.bottom)
