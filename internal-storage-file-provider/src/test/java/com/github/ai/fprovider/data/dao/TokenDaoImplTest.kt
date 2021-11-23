@@ -94,6 +94,28 @@ class TokenDaoImplTest {
             .isEqualTo(emptySet<String>())
     }
 
+    @Test
+    fun `remove should remove token from preferences`() {
+        // arrange
+        every { serializer.serialize(TOKEN_FOR_IMAGE) }.returns(SERIALIZED_IMAGE_TOKEN)
+        every { serializer.serialize(TOKEN_FOR_DIRECTORY) }.returns(SERIALIZED_DIRECTORY_TOKEN)
+        every { deserializer.deserialize(SERIALIZED_IMAGE_TOKEN) }.returns(TOKEN_FOR_IMAGE)
+        every { deserializer.deserialize(SERIALIZED_DIRECTORY_TOKEN) }.returns(TOKEN_FOR_DIRECTORY)
+
+        dao.add(TOKEN_FOR_IMAGE)
+        dao.add(TOKEN_FOR_DIRECTORY)
+
+        assertThat(preferences.getStringSet(KEY_TOKENS_DATA, null))
+            .isEqualTo(setOf(SERIALIZED_IMAGE_TOKEN, SERIALIZED_DIRECTORY_TOKEN))
+
+        // act
+        dao.remove(TOKEN_FOR_IMAGE.authToken)
+
+        // assert
+        assertThat(preferences.getStringSet(KEY_TOKENS_DATA, null))
+            .isEqualTo(setOf(SERIALIZED_DIRECTORY_TOKEN))
+    }
+
     companion object {
         private const val SERIALIZED_IMAGE_TOKEN = "serialized-image-token"
         private const val SERIALIZED_DIRECTORY_TOKEN = "serialized-directory-token"

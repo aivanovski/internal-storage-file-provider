@@ -4,8 +4,12 @@ import com.github.ai.fprovider.data.dao.TokenDao
 import com.github.ai.fprovider.domain.AuthTokenValidator
 import com.github.ai.fprovider.entity.TokenAndPath
 import com.github.ai.fprovider.test.TestData.INVALID_TOKEN
+import com.github.ai.fprovider.test.TestData.TOKEN_FOR_DIRECTORY
+import com.github.ai.fprovider.test.TestData.TOKEN_FOR_IMAGE
 import com.github.ai.fprovider.test.TestData.VALID_TOKEN
 import com.github.ai.fprovider.utils.Constants.EMPTY
+import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -65,6 +69,31 @@ class InternalStorageTokenManagerTest {
         // assert
         verify { tokenDao.removeAll() }
         confirmVerified(tokenDao)
+    }
+
+    @Test
+    fun `remove should call dao`() {
+        // arrange
+        every { tokenDao.remove(VALID_TOKEN) }.returns(Unit)
+
+        // act
+        tokenManager.removeToken(VALID_TOKEN)
+
+        // assert
+        verify { tokenDao.remove(VALID_TOKEN) }
+        confirmVerified(tokenDao)
+    }
+
+    @Test
+    fun `getPathByToken should return associated path`() {
+        // arrange
+        every { tokenDao.getAll() }.returns(listOf(TOKEN_FOR_IMAGE, TOKEN_FOR_DIRECTORY))
+
+        // act
+        val path = tokenManager.getPathByToken(TOKEN_FOR_IMAGE.authToken)
+
+        // assert
+        assertThat(path).isEqualTo(TOKEN_FOR_IMAGE.rootPath)
     }
 
     companion object {

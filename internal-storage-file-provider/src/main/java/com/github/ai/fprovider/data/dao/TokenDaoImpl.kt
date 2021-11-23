@@ -32,6 +32,15 @@ internal class TokenDaoImpl(
         saveData(emptySet())
     }
 
+    override fun remove(token: String) {
+        val data = getAll()
+            .filter { it.authToken != token }
+            .map { serializer.serialize(it) }
+            .toSet()
+
+        saveData(data)
+    }
+
     private fun readData(): Set<String> {
         return preferences.getStringSet(KEY_TOKENS_DATA, null) ?: emptySet()
     }

@@ -30,6 +30,17 @@ class InternalStorageTokenManager internal constructor(
         )
     }
 
+    fun getPathByToken(token: String): String? {
+        return tokenDao.getAll()
+            .filter { it.authToken == token }
+            .map { it.rootPath }
+            .firstOrNull()
+    }
+
+    fun removeToken(token: String) {
+        return tokenDao.remove(token)
+    }
+
     fun removeAllTokens() {
         tokenDao.removeAll()
     }
