@@ -3,6 +3,7 @@ package com.github.ai.fprovider.demo.presentation.file_list.cells
 import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.domain.ResourceProvider
+import com.github.ai.fprovider.demo.presentation.file_list.cells.model.FileCellModel
 import com.github.ai.fprovider.demo.utils.StringUtils
 
 class FileListCellFactory(

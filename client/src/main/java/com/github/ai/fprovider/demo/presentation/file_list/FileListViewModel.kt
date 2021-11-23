@@ -1,6 +1,5 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +18,7 @@ import com.github.ai.fprovider.demo.presentation.Screens.SettingsScreen
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
-import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCellViewModel
+import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileListCellFactory
 import com.github.ai.fprovider.demo.presentation.file_list.model.OpenFileData
 import com.github.ai.fprovider.demo.utils.Event

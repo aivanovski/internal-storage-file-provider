@@ -1,4 +1,4 @@
-package com.github.ai.fprovider.demo.presentation.file_list.cells
+package com.github.ai.fprovider.demo.presentation.file_list.cells.model
 
 import androidx.annotation.DrawableRes
 

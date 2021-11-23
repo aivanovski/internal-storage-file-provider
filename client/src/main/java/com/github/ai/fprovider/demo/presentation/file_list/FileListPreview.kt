@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.file_list.cells.DIRECTORY_MODEL
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FILE_MODEL
-import com.github.ai.fprovider.demo.presentation.file_list.cells.FileCellViewModel
+import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.theme.AppTheme
 import com.github.ai.fprovider.demo.presentation.theme.backgroundColor
 

@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.ai.fprovider.demo.R
+import com.github.ai.fprovider.demo.presentation.file_list.cells.model.FileCellModel
+import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.theme.AppTheme
 import com.github.ai.fprovider.demo.presentation.theme.backgroundColor
 
