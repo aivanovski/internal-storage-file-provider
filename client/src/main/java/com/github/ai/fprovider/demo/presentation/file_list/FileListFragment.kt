@@ -11,11 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.fragment.app.Fragment
 import com.github.ai.fprovider.demo.R
-import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.extension.setupActionBar
 import com.github.ai.fprovider.demo.extension.showToastMessage
 import com.github.ai.fprovider.demo.utils.EventObserver
@@ -35,6 +35,7 @@ class FileListFragment : Fragment() {
         inflater.inflate(R.menu.file_list, menu)
     }
 
+    @ExperimentalFoundationApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

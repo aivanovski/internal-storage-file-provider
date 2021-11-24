@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ private val CELLS = listOf(
     FileCellViewModel(FILE_MODEL)
 )
 
+@ExperimentalFoundationApi
 @Composable
 private fun Preview(
     state: ScreenState,
@@ -24,11 +26,19 @@ private fun Preview(
 ) {
     AppTheme {
         Box(modifier = Modifier.background(backgroundColor)) {
-            FileListLayout(state, cells)
+            FileListLayout(
+                state = state,
+                cells = cells,
+                fileDialogModel = null,
+                onFileDialogDismissed = {},
+                onOpenFileClicked = {},
+                onOpenFileAsTextClicked = {}
+            )
         }
     }
 }
 
+@ExperimentalFoundationApi
 @Preview(name = "Data")
 @Composable
 fun FileListScreen_Data() {
@@ -38,6 +48,7 @@ fun FileListScreen_Data() {
     )
 }
 
+@ExperimentalFoundationApi
 @Preview(name = "Data with Error")
 @Composable
 fun FileListScreen_DataWithError() {
@@ -47,6 +58,7 @@ fun FileListScreen_DataWithError() {
     )
 }
 
+@ExperimentalFoundationApi
 @Preview(name = "Empty")
 @Composable
 fun FileListScreen_Empty() {
@@ -56,6 +68,7 @@ fun FileListScreen_Empty() {
     )
 }
 
+@ExperimentalFoundationApi
 @Preview(name = "Loading")
 @Composable
 fun FileListScreen_Loading() {
@@ -65,6 +78,7 @@ fun FileListScreen_Loading() {
     )
 }
 
+@ExperimentalFoundationApi
 @Preview(name = "Error")
 @Composable
 fun FileListScreen_Error() {

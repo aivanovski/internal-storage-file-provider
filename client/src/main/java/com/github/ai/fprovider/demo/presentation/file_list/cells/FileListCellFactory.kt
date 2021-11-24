@@ -13,7 +13,8 @@ class FileListCellFactory(
     fun createCellModels(
         parent: FileEntity?,
         files: List<FileEntity>,
-        onFileClicked: (file: FileEntity) -> Unit
+        onFileClicked: (file: FileEntity) -> Unit,
+        onFileLongClicked: (file: FileEntity) -> Unit
     ): List<FileCellModel> {
         val allFiles = files.toMutableList().apply {
             if (parent != null) {
@@ -27,6 +28,13 @@ class FileListCellFactory(
             val file = idToFileMap[id]
             if (file != null) {
                 onFileClicked.invoke(file)
+            }
+        }
+
+        val onItemLongClick = { id: String ->
+            val file = idToFileMap[id]
+            if (file != null) {
+                onFileLongClicked.invoke(file)
             }
         }
 
@@ -54,7 +62,8 @@ class FileListCellFactory(
                 name = name,
                 description = description,
                 iconResId = icon,
-                onClick = onItemClick
+                onClick = onItemClick,
+                onLongClick = onItemLongClick
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo.presentation.file_list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
@@ -32,24 +34,43 @@ import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.ERRO
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.LOADING
 import com.github.ai.fprovider.demo.presentation.file_list.cells.view.FileCell
 import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
+import com.github.ai.fprovider.demo.presentation.file_list.dialog.FileDialog
+import com.github.ai.fprovider.demo.presentation.file_list.model.FileDialogModel
 import com.github.ai.fprovider.demo.presentation.theme.dividerColor
 import com.github.ai.fprovider.demo.utils.StringUtils
 
+@ExperimentalFoundationApi
 @Composable
 fun FileListScreen(viewModel: FileListViewModel) {
     val state by viewModel.screenState.observeAsState(ScreenState.loading())
     val cells by viewModel.cellViewModels.observeAsState(emptyList())
+    val fileDialogModel by viewModel.showFileDialogEvent.observeAsState()
 
     FileListLayout(
         state = state,
-        cells = cells
+        cells = cells,
+        fileDialogModel = fileDialogModel,
+        onFileDialogDismissed = {
+            viewModel.onFileDialogDismissed()
+        },
+        onOpenFileClicked = {
+            viewModel.onOpenFileClicked(it)
+        },
+        onOpenFileAsTextClicked = {
+            viewModel.onOpenFileAsTextClicked(it)
+        }
     )
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun FileListLayout(
     state: ScreenState,
-    cells: List<FileCellViewModel>
+    cells: List<FileCellViewModel>,
+    fileDialogModel: FileDialogModel?,
+    onFileDialogDismissed: () -> Unit,
+    onOpenFileClicked: (file: FileEntity) -> Unit,
+    onOpenFileAsTextClicked: (file: FileEntity) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -141,5 +162,14 @@ fun FileListLayout(
                 )
             }
         }
+    }
+
+    fileDialogModel?.let {
+        FileDialog(
+            file = it.file,
+            onDismissed = onFileDialogDismissed,
+            onOpenClicked = onOpenFileClicked,
+            onOpenAsTextClicked = onOpenFileAsTextClicked
+        )
     }
 }

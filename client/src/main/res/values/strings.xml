@@ -4,6 +4,15 @@
     <string name="parent_folder">Parent folder</string>
     <string name="folder">folder</string>
     <string name="press_again_to_exit">Press again to exit</string>
+    <string name="properties">Properties</string>
+    <string name="str_with_dots">%s:</string>
+    <string name="name">Name</string>
+    <string name="path">Path</string>
+    <string name="uri">Uri</string>
+    <string name="size">Size</string>
+    <string name="mime_type">Mime-Type</string>
+    <string name="open_as_text">Open as text</string>
+    <string name="open">Open</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

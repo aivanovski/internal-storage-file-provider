@@ -7,5 +7,6 @@ data class FileCellModel(
     val name: String,
     val description: String,
     @DrawableRes val iconResId: Int,
-    val onClick: ((id: String) -> Unit)? = null
+    val onClick: ((id: String) -> Unit)? = null,
+    val onLongClick: ((id: String) -> Unit)? = null
 )

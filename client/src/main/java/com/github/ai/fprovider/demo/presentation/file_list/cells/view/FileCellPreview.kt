@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo.presentation.file_list.cells.view
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -25,18 +26,21 @@ val DIRECTORY_MODEL = FileCellModel(
     iconResId = R.drawable.ic_folder_white_24dp
 )
 
+@ExperimentalFoundationApi
 @Preview
 @Composable
 fun FileCellPreviewWithFile() {
     Preview(model = FILE_MODEL)
 }
 
+@ExperimentalFoundationApi
 @Preview
 @Composable
 fun FileCellPreviewWithDir() {
     Preview(model = DIRECTORY_MODEL)
 }
 
+@ExperimentalFoundationApi
 @Composable
 private fun Preview(model: FileCellModel) {
     AppTheme {

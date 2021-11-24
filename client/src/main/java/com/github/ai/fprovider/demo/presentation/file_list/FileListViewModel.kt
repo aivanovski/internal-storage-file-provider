@@ -18,9 +18,10 @@ import com.github.ai.fprovider.demo.presentation.Screens.SettingsScreen
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
-import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.demo.presentation.file_list.cells.FileListCellFactory
-import com.github.ai.fprovider.demo.presentation.file_list.model.OpenFileData
+import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
+import com.github.ai.fprovider.demo.presentation.file_list.model.FileDialogModel
+import com.github.ai.fprovider.demo.presentation.file_list.model.OpenFileModel
 import com.github.ai.fprovider.demo.utils.Event
 import com.github.ai.fprovider.demo.utils.StringUtils.EMPTY
 import com.github.terrakok.cicerone.Router
@@ -40,7 +41,8 @@ class FileListViewModel(
     val actionBarTitle = MutableLiveData(resourceProvider.getString(R.string.app_name))
     val isActionBarBackButtonVisible = MutableLiveData(false)
     val showToastMessageEvent = MutableLiveData<Event<String>>()
-    val openFileEvent = MutableLiveData<Event<OpenFileData>>()
+    val openFileEvent = MutableLiveData<Event<OpenFileModel>>()
+    val showFileDialogEvent = MutableLiveData<FileDialogModel>()
 
     private var isExitOnBack = false
     private var parentDir: FileEntity? = null
@@ -89,7 +91,8 @@ class FileListViewModel(
                 val cellModels = cellFactory.createCellModels(
                     parent = parentDir,
                     files = files,
-                    onFileClicked = { file -> onFileClicked(file) }
+                    onFileClicked = { file -> onFileClicked(file) },
+                    onFileLongClicked = { file -> onFileLongClicked(file) }
                 )
 
                 cellViewModels.value = cellModels.map { FileCellViewModel(it) }
@@ -136,6 +139,21 @@ class FileListViewModel(
         router.navigateTo(SettingsScreen())
     }
 
+    fun onFileDialogDismissed() {
+        showFileDialogEvent.value = null
+    }
+
+    fun onOpenFileClicked(file: FileEntity) {
+        val uri = file.toPath(readAccessToken()).toUri()
+        val mimeType = getMimeTypeForFile(file)
+        openFileEvent.value = Event(OpenFileModel(uri, mimeType))
+    }
+
+    fun onOpenFileAsTextClicked(file: FileEntity) {
+        val uri = file.toPath(readAccessToken()).toUri()
+        openFileEvent.value = Event(OpenFileModel(uri, MIME_TYPE_TEXT))
+    }
+
     private fun showError(error: Exception) {
         val message = errorInteractor.getMessage(error)
         screenState.value = ScreenState.error(message)
@@ -149,13 +167,17 @@ class FileListViewModel(
             file.isDirectory -> onDirectoryClicked(file)
             else -> {
                 openFileEvent.value = Event(
-                    OpenFileData(
+                    OpenFileModel(
                         uri = file.toPath(accessToken = readAccessToken()).toUri(),
                         mimeType = getMimeTypeForFile(file)
                     )
                 )
             }
         }
+    }
+
+    private fun onFileLongClicked(file: FileEntity) {
+        showFileDialogEvent.value = FileDialogModel(file)
     }
 
     private fun getMimeTypeForFile(file: FileEntity): String {

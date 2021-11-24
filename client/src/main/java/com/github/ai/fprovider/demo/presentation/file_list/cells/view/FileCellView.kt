@@ -1,8 +1,9 @@
 package com.github.ai.fprovider.demo.presentation.file_list.cells.view
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,18 +26,25 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 
+@ExperimentalFoundationApi
 @Composable
 fun FileCell(viewModel: FileCellViewModel) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .clickable(
+            .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(),
                 onClick = {
-                    val id = viewModel.model.id
-                    viewModel.model.onClick?.invoke(id)
+                    viewModel.model.onClick?.invoke(
+                        viewModel.model.id
+                    )
+                },
+                onLongClick = {
+                    viewModel.model.onLongClick?.invoke(
+                        viewModel.model.id
+                    )
                 }
             )
     ) {
@@ -55,7 +63,6 @@ fun FileCell(viewModel: FileCellViewModel) {
                     start.linkTo(parent.start, margin = 16.dp)
                 }
         )
-
 
         Image(
             painter = painterResource(id = viewModel.model.iconResId),
