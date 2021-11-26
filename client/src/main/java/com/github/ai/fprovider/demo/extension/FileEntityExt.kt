@@ -17,3 +17,7 @@ fun FileEntity.toPath(accessToken: String): FilePath {
         accessToken = accessToken
     )
 }
+
+fun FileEntity.isHiddenFile(): Boolean {
+    return name.startsWith(".")
+}

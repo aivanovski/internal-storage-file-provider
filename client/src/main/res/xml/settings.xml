@@ -2,16 +2,30 @@
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.preference.EditTextPreference
-        app:key="@string/pref_root_path"
-        app:title="@string/root_path_title" />
+    <PreferenceCategory
+        app:title="@string/authorization_preferences">
 
-    <androidx.preference.EditTextPreference
-        app:key="@string/pref_access_token"
-        app:title="@string/access_token_title" />
+        <androidx.preference.EditTextPreference
+            app:key="@string/pref_root_path"
+            app:title="@string/root_path_title" />
 
-    <androidx.preference.EditTextPreference
-        app:key="@string/pref_content_provider_authority"
-        app:title="@string/authority_title" />
+        <androidx.preference.EditTextPreference
+            app:key="@string/pref_access_token"
+            app:title="@string/access_token_title" />
+
+        <androidx.preference.EditTextPreference
+            app:key="@string/pref_content_provider_authority"
+            app:title="@string/authority_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/ui_preferences">
+
+        <androidx.preference.CheckBoxPreference
+            app:key="@string/pref_is_show_hidden_files"
+            app:title="@string/show_hidden_files"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

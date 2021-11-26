@@ -93,6 +93,7 @@ class FileListViewModel(
                     parent = parentDir,
                     files = files,
                     accessToken = readAccessToken(),
+                    isShowHiddenFiles = settings.isShowHiddenFiles,
                     onFileClicked = { file -> onFileClicked(file) },
                     onFileLongClicked = { file -> onFileLongClicked(file) }
                 )
@@ -251,6 +252,9 @@ class FileListViewModel(
                 currentPath = currentPath.copy(
                     authority = readContentProviderAuthority()
                 )
+                loadData()
+            }
+            Settings.Type.IS_SHOW_HIDDEN_FILES -> {
                 loadData()
             }
         }

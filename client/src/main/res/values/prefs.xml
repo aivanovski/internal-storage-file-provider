@@ -4,4 +4,5 @@
     <string name="pref_access_token" translatable="false">accessToken</string>
     <string name="pref_root_path" translatable="false">rootPath</string>
     <string name="pref_content_provider_authority" translatable="false">contentProviderAuthority</string>
+    <string name="pref_is_show_hidden_files">isShowHiddenFiles</string>
 </resources>
