@@ -8,8 +8,8 @@ ext {
             libraryVersionCode: 4,
             libraryVersionName: "0.4.0",
 
-            clientVersionCode : 4,
-            clientVersionName : "0.4.0"
+            clientVersionCode : 5,
+            clientVersionName : "0.5.0"
     ]
 
     kotlinCompilerApiVersion = '1.0.1'
