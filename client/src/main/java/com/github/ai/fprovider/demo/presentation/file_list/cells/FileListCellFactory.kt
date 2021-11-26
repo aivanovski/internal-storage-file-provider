@@ -4,7 +4,7 @@ import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.domain.ResourceProvider
 import com.github.ai.fprovider.demo.extension.isHiddenFile
-import com.github.ai.fprovider.demo.extension.toPath
+import com.github.ai.fprovider.demo.extension.toFilePath
 import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.presentation.file_list.cells.model.FileCellModel
 import com.github.ai.fprovider.demo.utils.MimeTypes
@@ -69,7 +69,7 @@ class FileListCellFactory(
                 }
 
                 val uri = if (MimeTypes.IMAGE_TYPES.contains(file.mimeType)) {
-                    file.toPath(accessToken).toUri()
+                    file.toFilePath(accessToken).toUri()
                 } else {
                     null
                 }

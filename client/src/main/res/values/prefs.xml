@@ -5,4 +5,6 @@
     <string name="pref_root_path" translatable="false">rootPath</string>
     <string name="pref_content_provider_authority" translatable="false">contentProviderAuthority</string>
     <string name="pref_is_show_hidden_files">isShowHiddenFiles</string>
+
+    <string name="content_provider_authority" translatable="false">com.github.ai.fprovider.client.files</string>
 </resources>

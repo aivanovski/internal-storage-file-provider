@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
-import com.github.ai.fprovider.demo.extension.toPath
+import com.github.ai.fprovider.demo.extension.toFilePath
 import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.utils.StringUtils
 import com.github.ai.fprovider.demo.utils.StringUtils.EMPTY
@@ -88,11 +88,11 @@ fun FileDialogContent(file: FileEntity) {
         )
         TextRow(
             title = stringResource(R.string.str_with_dots, stringResource(R.string.path)),
-            text = file.toPath(accessToken = EMPTY).path
+            text = file.toFilePath(accessToken = EMPTY).path
         )
         TextRow(
             title = stringResource(R.string.str_with_dots, stringResource(R.string.uri)),
-            text = file.toPath(accessToken = "****").toUri().toString()
+            text = file.toFilePath(accessToken = "****").toUri().toString()
         )
         if (!file.isDirectory) {
             TextRow(

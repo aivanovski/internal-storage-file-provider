@@ -12,8 +12,6 @@ import com.github.ai.fprovider.demo.domain.ResourceProvider
 import com.github.ai.fprovider.demo.domain.Settings
 import com.github.ai.fprovider.demo.domain.file_list.FileListInteractor
 import com.github.ai.fprovider.demo.extension.toFilePath
-import com.github.ai.fprovider.demo.extension.toPath
-import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.presentation.Screens.SettingsScreen
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenState
 import com.github.ai.fprovider.demo.presentation.core.model.ScreenStateType.DATA
@@ -147,14 +145,11 @@ class FileListViewModel(
     }
 
     fun onOpenFileClicked(file: FileEntity) {
-        val uri = file.toPath(readAccessToken()).toUri()
-        val mimeType = getMimeTypeForFile(file)
-        openFileEvent.value = Event(OpenFileModel(uri, mimeType))
+        openFile(file, isOpenAsText = false)
     }
 
     fun onOpenFileAsTextClicked(file: FileEntity) {
-        val uri = file.toPath(readAccessToken()).toUri()
-        openFileEvent.value = Event(OpenFileModel(uri, MimeTypes.TEXT))
+        openFile(file, isOpenAsText = true)
     }
 
     private fun showError(error: Exception) {
@@ -169,12 +164,30 @@ class FileListViewModel(
             file == parentDir -> onParentDirectoryClicked()
             file.isDirectory -> onDirectoryClicked(file)
             else -> {
+                openFile(file, isOpenAsText = false)
+            }
+        }
+    }
+
+    private fun openFile(file: FileEntity, isOpenAsText: Boolean) {
+        val mimeType = if (isOpenAsText) {
+            MimeTypes.TEXT
+        } else {
+            getMimeTypeForFile(file)
+        }
+
+        viewModelScope.launch {
+            val uriResult = interactor.createProxyUri(file)
+
+            if (uriResult.isSuccess) {
                 openFileEvent.value = Event(
                     OpenFileModel(
-                        uri = file.toPath(accessToken = readAccessToken()).toUri(),
-                        mimeType = getMimeTypeForFile(file)
+                        uri = uriResult.getOrThrow(),
+                        mimeType = mimeType
                     )
                 )
+            } else {
+                showError(uriResult.getExceptionOrThrow())
             }
         }
     }
@@ -223,7 +236,7 @@ class FileListViewModel(
         this.currentDir = currentDir
         this.parentDir = parentDir
 
-        currentPath = currentDir.toPath(accessToken = readAccessToken())
+        currentPath = currentDir.toFilePath(accessToken = readAccessToken())
         isActionBarBackButtonVisible.value = (parentDir != null)
         actionBarTitle.value = if (parentDir != null) {
             currentDir.name
