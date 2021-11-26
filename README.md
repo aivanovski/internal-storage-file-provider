@@ -3,13 +3,13 @@ This project offers `InternalStorageFileProvider` and client application (IS Bro
 `InternalStorageFileProvider` allows to share securely files inside application private directory (`Context.getDataDir()`) to any other application.
 Access to internal files is possible only with Access Token.
 
-# How to use `InternalStorageFileProvider`?
+## How to use `InternalStorageFileProvider`?
 - 1 - Configure `AndroidManifest.xml`
 - 2 - Specify Access Token to a directory
-- 3 - Run application with `InternalStorageFileProvider`
+- 3 - Install application with `InternalStorageFileProvider`
 - 4 - Browse files with client application (IS Browser)
 
-# 1. Configure `AndroidManifest.xml`
+## 1. Configure `AndroidManifest.xml`
 Define a provider in your application `AndroidManifest.xml`:
 ```xml
 <application>
@@ -45,7 +45,7 @@ Define a meta-data with your `InternalStorageTokenManager` authority:
 </application>
 ```
 
-# 2. Specify Access Token to a directory
+## 2. Specify Access Token to a directory
 Get instance of `InternalStorageTokenManager`:
 ```kotlin
 val tokenManger = InternalStorageTokenManager.from(context)
@@ -68,12 +68,14 @@ Example of valid Token:
 UUID.randomUUID().toString()
 ```
 
-# 3. Run application with `InternalStorageFileProvider`
-Install app with configured `InternalStorageFileProvider`.
+## 3. Install application with `InternalStorageFileProvider`
+Install and run app with configured `InternalStorageFileProvider`.
 
-# 4. Browse files with client application (IS Browser)
-4.1 Install "IS Browser" application. It can be installed from [CI page](https://github.com/aivanovski/internal-storage-file-provider/actions)</br>
-4.2 Congure "IS Browser" so that it will be able to access to your `InternalStorageFileProvider`. Open settings screen in "IS Browser" and configure listed parameters:
+## 4. Browse files with client application (IS Browser)
+#### 4.1 Install "IS Browser" application
+Build can be download from [CI page](https://github.com/aivanovski/internal-storage-file-provider/actions)</br>
+#### 4.2 Congure "IS Browser" to access to your `InternalStorageFileProvider`
+Open settings screen in "IS Browser" and configure listed parameters:
 - Root directory path (it is a relative path to a shared directory)
 - Access Token
 - Content provider authority (your `InternalStorageFileProvider` authority)
