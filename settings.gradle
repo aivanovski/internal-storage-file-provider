@@ -1,1 +1,1 @@
-include ':client', ':demo', ':internal-storage-file-provider'
+include ':is-browser', ':demo', ':internal-storage-file-provider'
