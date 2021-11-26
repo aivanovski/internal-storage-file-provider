@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileCellViewModel
 
 @ExperimentalFoundationApi
@@ -48,33 +50,54 @@ fun FileCell(viewModel: FileCellViewModel) {
                 }
             )
     ) {
-        val (icon, iconBackground, title, description) = createRefs()
+        val (icon, iconBackground, preview, title, description) = createRefs()
 
         createVerticalChain(title, description, chainStyle = ChainStyle.Packed)
 
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(shape = CircleShape)
-                .background(color = Color.LightGray)
-                .constrainAs(iconBackground) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start, margin = 16.dp)
-                }
-        )
+        val iconBarrier = createEndBarrier(icon, preview)
 
-        Image(
-            painter = painterResource(id = viewModel.model.iconResId),
-            contentDescription = null,
-            modifier = Modifier
-                .constrainAs(icon) {
-                    top.linkTo(iconBackground.top)
-                    bottom.linkTo(iconBackground.bottom)
-                    start.linkTo(iconBackground.start)
-                    end.linkTo(iconBackground.end)
-                }
-        )
+        if (viewModel.model.imageUri == null) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = Color.LightGray)
+                    .constrainAs(iconBackground) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            )
+
+            Image(
+                painter = painterResource(id = viewModel.model.iconResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .constrainAs(icon) {
+                        top.linkTo(iconBackground.top)
+                        bottom.linkTo(iconBackground.bottom)
+                        start.linkTo(iconBackground.start)
+                        end.linkTo(iconBackground.end)
+                    }
+            )
+        } else {
+            Image(
+                painter = rememberImagePainter(
+                    data = viewModel.model.imageUri,
+                    builder = {
+                        transformations(CircleCropTransformation())
+                    }
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .constrainAs(preview) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            )
+        }
 
         Text(
             text = viewModel.model.name,
@@ -86,7 +109,7 @@ fun FileCell(viewModel: FileCellViewModel) {
                 .constrainAs(title) {
                     top.linkTo(parent.top)
                     bottom.linkTo(description.top)
-                    start.linkTo(iconBackground.end, margin = 16.dp)
+                    start.linkTo(iconBarrier, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
                     width = Dimension.fillToConstraints
                 }

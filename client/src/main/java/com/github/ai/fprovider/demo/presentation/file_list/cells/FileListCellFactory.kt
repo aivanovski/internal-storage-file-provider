@@ -3,7 +3,10 @@ package com.github.ai.fprovider.demo.presentation.file_list.cells
 import com.github.ai.fprovider.demo.R
 import com.github.ai.fprovider.demo.data.entity.FileEntity
 import com.github.ai.fprovider.demo.domain.ResourceProvider
+import com.github.ai.fprovider.demo.extension.toPath
+import com.github.ai.fprovider.demo.extension.toUri
 import com.github.ai.fprovider.demo.presentation.file_list.cells.model.FileCellModel
+import com.github.ai.fprovider.demo.utils.MimeTypes
 import com.github.ai.fprovider.demo.utils.StringUtils
 
 class FileListCellFactory(
@@ -13,6 +16,7 @@ class FileListCellFactory(
     fun createCellModels(
         parent: FileEntity?,
         files: List<FileEntity>,
+        accessToken: String,
         onFileClicked: (file: FileEntity) -> Unit,
         onFileLongClicked: (file: FileEntity) -> Unit
     ): List<FileCellModel> {
@@ -57,11 +61,18 @@ class FileListCellFactory(
                 else -> "-"
             }
 
+            val uri = if (MimeTypes.IMAGE_TYPES.contains(file.mimeType)) {
+                file.toPath(accessToken).toUri()
+            } else {
+                null
+            }
+
             FileCellModel(
                 id = file.path,
                 name = name,
                 description = description,
                 iconResId = icon,
+                imageUri = uri,
                 onClick = onItemClick,
                 onLongClick = onItemLongClick
             )

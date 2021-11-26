@@ -23,6 +23,7 @@ import com.github.ai.fprovider.demo.presentation.file_list.cells.viewmodel.FileC
 import com.github.ai.fprovider.demo.presentation.file_list.model.FileDialogModel
 import com.github.ai.fprovider.demo.presentation.file_list.model.OpenFileModel
 import com.github.ai.fprovider.demo.utils.Event
+import com.github.ai.fprovider.demo.utils.MimeTypes
 import com.github.ai.fprovider.demo.utils.StringUtils.EMPTY
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.launch
@@ -91,6 +92,7 @@ class FileListViewModel(
                 val cellModels = cellFactory.createCellModels(
                     parent = parentDir,
                     files = files,
+                    accessToken = readAccessToken(),
                     onFileClicked = { file -> onFileClicked(file) },
                     onFileLongClicked = { file -> onFileLongClicked(file) }
                 )
@@ -151,7 +153,7 @@ class FileListViewModel(
 
     fun onOpenFileAsTextClicked(file: FileEntity) {
         val uri = file.toPath(readAccessToken()).toUri()
-        openFileEvent.value = Event(OpenFileModel(uri, MIME_TYPE_TEXT))
+        openFileEvent.value = Event(OpenFileModel(uri, MimeTypes.TEXT))
     }
 
     private fun showError(error: Exception) {
@@ -182,7 +184,7 @@ class FileListViewModel(
 
     private fun getMimeTypeForFile(file: FileEntity): String {
         return if (file.mimeType.isNullOrBlank()) {
-            MIME_TYPE_TEXT
+            MimeTypes.TEXT
         } else {
             file.mimeType
         }
@@ -278,9 +280,5 @@ class FileListViewModel(
 
     private fun readAccessToken(): String {
         return settings.accessToken ?: EMPTY
-    }
-
-    companion object {
-        private const val MIME_TYPE_TEXT = "text/plain"
     }
 }
