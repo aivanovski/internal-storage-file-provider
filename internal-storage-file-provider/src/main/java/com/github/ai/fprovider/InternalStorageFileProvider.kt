@@ -26,6 +26,9 @@ import com.github.ai.fprovider.logging.AndroidLogcatLogger
 import com.github.ai.fprovider.utils.toCursor
 import java.io.File
 
+/**
+ * Serves directories and files from internal data directory [android.content.Context.getDataDir]
+ */
 class InternalStorageFileProvider constructor() : ContentProvider() {
 
     private val isLoggingEnabled = false
