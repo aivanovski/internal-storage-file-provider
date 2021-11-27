@@ -17,11 +17,11 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew client:assembleDebug
+          ./gradlew is-browser:assembleDebug
 
       - name: Store APK file
         uses: actions/upload-artifact@v2
         with:
           name: is-browser 
           path: |
-              ./client/build/outputs/apk/debug/client-debug.apk
+              ./is-browser/build/outputs/apk/debug/is-browser-debug.apk
