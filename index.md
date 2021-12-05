@@ -1,37 +1,81 @@
-## Welcome to GitHub Pages
+# Internal-Storage-File-Provider (ISFProvider)
+This project offers `InternalStorageFileProvider` and client application (IS Browser) to it.
+`InternalStorageFileProvider` allows to share securely files inside application private directory (`Context.getDataDir()`) to any other application.
+Access to internal files is possible only with Access Token.
 
-You can use the [editor on GitHub](https://github.com/aivanovski/internal-storage-file-provider/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## How to use `InternalStorageFileProvider`?
+- 1 - Configure `AndroidManifest.xml`
+- 2 - Specify Access Token to a directory
+- 3 - Install application with `InternalStorageFileProvider`
+- 4 - Browse files with client application (IS Browser)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## 1. Configure `AndroidManifest.xml`
+Define a provider in your application `AndroidManifest.xml`:
+```xml
+<application>
 
-### Markdown
+    ...
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+    <provider
+        android:name="com.github.ai.fprovider.InternalStorageFileProvider"
+        android:authorities="CONTENT_PROVIDER_AUTHORITY"
+        android:exported="true" />
 
-```markdown
-Syntax highlighted code block
+    <meta-data
+        android:name="com.github.ai.fprovider.provider_authority"
+        android:value="CONTENT_PROVIDER_AUTHORITY" />
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+</application>
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+Define a meta-data with your `InternalStorageTokenManager` authority:
+```xml
+<application>
 
-### Jekyll Themes
+    ...
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/aivanovski/internal-storage-file-provider/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+    <provider 
+        ...
+        />
 
-### Support or Contact
+    <meta-data
+        android:name="com.github.ai.fprovider.provider_authority"
+        android:value="CONTENT_PROVIDER_AUTHORITY" />
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+</application>
+```
+
+## 2. Specify Access Token to a directory
+Get instance of `InternalStorageTokenManager`:
+```kotlin
+val tokenManger = InternalStorageTokenManager.from(context)
+```
+Save token for a specified path (path should be relative to a data directory `Context.getDataDir()`):
+```kotlin
+val TOKEN = "your-secured-token-to-access-the-files"
+// Absolute path will be "/data/data/com.your_app_package_name/files/config"
+val PATH = "/files/config"
+if (tokenManager.getPathByToken(TOKEN) != PATH) {
+    tokenManager.addToken(TOKEN, PATH)
+}
+```
+Token requirements:
+ - can contain a word characters, a digit characters or minus sign (a-zA-Z0-9_\-)
+ - at least 4 characters
+
+Example of valid Token:
+```kotlin
+UUID.randomUUID().toString()
+```
+
+## 3. Install application with `InternalStorageFileProvider`
+Install and run app with configured `InternalStorageFileProvider`.
+
+## 4. Browse files with client application (IS Browser)
+#### 4.1 Install "IS Browser" application
+Build can be downloaded from [CI page](https://github.com/aivanovski/internal-storage-file-provider/actions)</br>
+#### 4.2 Congure "IS Browser" to access to your `InternalStorageFileProvider`
+Open settings screen in "IS Browser" and configure listed parameters:
+- Root directory path (it is a relative path to a shared directory)
+- Access Token
+- Content provider authority (your `InternalStorageFileProvider` authority)
