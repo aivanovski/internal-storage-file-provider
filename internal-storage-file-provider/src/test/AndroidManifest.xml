@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.ai.fprovider">
+    package="com.github.ai.isfprovider">
 
     <application>
 
         <meta-data
-            android:name="com.github.ai.fprovider.provider_authority"
+            android:name="com.github.ai.isfprovider.provider_authority"
             android:value="test-authority" />
 
     </application>
