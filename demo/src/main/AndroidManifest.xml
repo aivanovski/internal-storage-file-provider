@@ -21,13 +21,12 @@
         </activity>
 
         <meta-data
-            android:name="com.github.ai.fprovider.provider_authority"
-            android:value="com.github.ai.fprovider.demo.files" />
+            android:name="com.github.ai.isfprovider.provider_authority"
+            android:value="com.github.ai.isfprovider.demo.files" />
 
         <provider
-            android:name="com.github.ai.fprovider.InternalStorageFileProvider"
-            android:authorities="com.github.ai.fprovider.demo.files"
-            android:enabled="true"
+            android:name="com.github.ai.isfprovider.InternalStorageFileProvider"
+            android:authorities="com.github.ai.isfprovider.demo.files"
             android:exported="true" />
 
     </application>

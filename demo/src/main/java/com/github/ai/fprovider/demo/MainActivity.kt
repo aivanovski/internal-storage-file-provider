@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.github.ai.fprovider.InternalStorageTokenManager
+import com.github.ai.isfprovider.InternalStorageTokenManager
 
 class MainActivity : AppCompatActivity() {
 

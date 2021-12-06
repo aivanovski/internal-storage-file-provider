@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.github.ai.fprovider.InternalStorageTokenManager
+import com.github.ai.isfprovider.InternalStorageTokenManager
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -55,7 +55,7 @@ class MainViewModel(
     }
 
     companion object {
-        private const val DEFAULT_PATH_TO_FILES = "/file/home"
+        private const val DEFAULT_PATH_TO_FILES = "/files/home"
     }
 }
 
