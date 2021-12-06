@@ -2,8 +2,8 @@ package com.github.ai.fprovider.client.data
 
 import android.content.Context
 import android.database.Cursor
-import com.github.ai.fprovider.Columns
-import com.github.ai.fprovider.MimeTypes
+import com.github.ai.isfprovider.Columns
+import com.github.ai.isfprovider.MimeTypes
 import com.github.ai.fprovider.client.data.entity.FileEntity
 import com.github.ai.fprovider.client.data.entity.FilePath
 import com.github.ai.fprovider.client.data.entity.Result
