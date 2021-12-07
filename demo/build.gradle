@@ -44,7 +44,8 @@ android {
 }
 
 dependencies {
-    implementation project(":internal-storage-file-provider")
+    implementation "com.github.aivanovski:internal-storage-file-provider:0.8.0"
+
     // MultiDex
     implementation "androidx.multidex:multidex:$multidexVersion"
 
