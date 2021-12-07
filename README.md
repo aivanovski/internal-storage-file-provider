@@ -1,15 +1,35 @@
 # Internal-Storage-File-Provider (ISFProvider)
+[![](https://jitpack.io/v/aivanovski/internal-storage-file-provider.svg)](https://jitpack.io/#aivanovski/internal-storage-file-provider)</br>
+
 This project offers `InternalStorageFileProvider` and client application (IS Browser) to it.
 `InternalStorageFileProvider` allows to share securely files inside application private directory (`Context.getDataDir()`) to any other application.
 Access to internal files is possible only with Access Token.
 
-## How to use `InternalStorageFileProvider`?
-- 1 - Configure `AndroidManifest.xml`
-- 2 - Specify Access Token to a directory
-- 3 - Install application with `InternalStorageFileProvider`
-- 4 - Browse files with client application (IS Browser)
+## Usage
+- 1 - Specify dependency in `build.gradle`
+- 2 - Configure `AndroidManifest.xml`
+- 3 - Specify Access Token to a directory
+- 4 - Install application with `InternalStorageFileProvider`
+- 5 - Browse files with client application (IS Browser)
 
-## 1. Configure `AndroidManifest.xml`
+## Demo
+Sub-project `demo/` demonstrates the usage of `InternalStorageFileProvider`.
+
+## 1. Specify dependency in `build.gradle`
+This Android library project is available as AAR in [Jitpack](https://jitpack.io/#aivanovski/internal-storage-file-provider) repository
+```groovy
+repositories {
+    maven {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation "com.github.aivanovski:internal-storage-file-provider:X.X.X"
+}
+```
+
+## 2. Configure `AndroidManifest.xml`
 Define a provider in your application `AndroidManifest.xml`:
 ```xml
 <application>
@@ -17,12 +37,12 @@ Define a provider in your application `AndroidManifest.xml`:
     ...
 
     <provider
-        android:name="com.github.ai.fprovider.InternalStorageFileProvider"
+        android:name="com.github.ai.isfprovider.InternalStorageFileProvider"
         android:authorities="CONTENT_PROVIDER_AUTHORITY"
         android:exported="true" />
 
     <meta-data
-        android:name="com.github.ai.fprovider.provider_authority"
+        android:name="com.github.ai.isfprovider.provider_authority"
         android:value="CONTENT_PROVIDER_AUTHORITY" />
 
 </application>
@@ -39,13 +59,13 @@ Define a meta-data with your `InternalStorageTokenManager` authority:
         />
 
     <meta-data
-        android:name="com.github.ai.fprovider.provider_authority"
+        android:name="com.github.ai.isfprovider.provider_authority"
         android:value="CONTENT_PROVIDER_AUTHORITY" />
 
 </application>
 ```
 
-## 2. Specify Access Token to a directory
+## 3. Specify Access Token to a directory
 Get instance of `InternalStorageTokenManager`:
 ```kotlin
 val tokenManger = InternalStorageTokenManager.from(context)
@@ -68,13 +88,13 @@ Example of valid Token:
 UUID.randomUUID().toString()
 ```
 
-## 3. Install application with `InternalStorageFileProvider`
+## 4. Install application with `InternalStorageFileProvider`
 Install and run app with configured `InternalStorageFileProvider`.
 
-## 4. Browse files with client application (IS Browser)
-#### 4.1 Install "IS Browser" application
-Build can be downloaded from [CI page](https://github.com/aivanovski/internal-storage-file-provider/actions)</br>
-#### 4.2 Congure "IS Browser" to access to your `InternalStorageFileProvider`
+## 5. Browse files with client application (IS Browser)
+#### 5.1 Install "IS Browser" application
+Build can be downloaded from [CI page](https://github.com/aivanovski/internal-storage-file-provider/actions)</br> or build it from sources `is-browser/`
+#### 5.2 Configure "IS Browser" to access to your `InternalStorageFileProvider`
 Open settings screen in "IS Browser" and configure listed parameters:
 - Root directory path (it is a relative path to a shared directory)
 - Access Token
