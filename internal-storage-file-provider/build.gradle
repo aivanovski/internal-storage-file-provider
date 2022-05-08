@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
+apply from: '../jacoco.gradle'
 
 android {
     def ext = rootProject.extensions.ext
@@ -26,6 +27,12 @@ android {
     testOptions {
         unitTests {
             includeAndroidResources = true
+        }
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']
+            }
         }
     }
 
