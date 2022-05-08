@@ -1,5 +1,5 @@
 # Internal-Storage-File-Provider (ISFProvider)
-[![](https://jitpack.io/v/aivanovski/internal-storage-file-provider.svg)](https://jitpack.io/#aivanovski/internal-storage-file-provider)</br>
+[![](https://jitpack.io/v/aivanovski/internal-storage-file-provider.svg)](https://jitpack.io/#aivanovski/internal-storage-file-provider) ![Coverage](.github/badges/jacoco.svg)</br>
 
 This project offers `InternalStorageFileProvider` and client application (IS Browser) to it.
 `InternalStorageFileProvider` allows to share securely files inside application private directory (`Context.getDataDir()`) to any other application.
