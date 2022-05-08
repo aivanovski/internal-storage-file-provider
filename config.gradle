@@ -44,4 +44,7 @@ ext {
     truthVersion = '1.0'
     androidXArchVersion = '2.1.0'
     androidXCoreVersion = '1.2.0'
+
+    // Coverage
+    jacocoVersion = '0.8.7'
 }
