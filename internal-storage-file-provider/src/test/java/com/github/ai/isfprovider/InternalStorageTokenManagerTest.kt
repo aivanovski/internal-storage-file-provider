@@ -52,7 +52,7 @@ class InternalStorageTokenManagerTest {
     @Test(expected = IllegalArgumentException::class)
     fun `addToken should return IllegalArgumentException if path is invalid`() {
         // arrange
-        every { tokenValidator.isTokenValid(VALID_TOKEN) }.returns(false)
+        every { tokenValidator.isTokenValid(VALID_TOKEN) }.returns(true)
 
         // act
         tokenManager.addToken(VALID_TOKEN, EMPTY)
