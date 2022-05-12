@@ -68,6 +68,14 @@ class InternalStorageTokenManager internal constructor(
         tokenDao.removeAll()
     }
 
+    /**
+     * Return all saved tokens
+     */
+    fun getAllTokens(): List<String> {
+        return tokenDao.getAll()
+            .map { it.authToken }
+    }
+
     companion object {
 
         /**
