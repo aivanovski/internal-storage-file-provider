@@ -155,4 +155,12 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
         val message = result.getExceptionOrThrow().toString()
         throw RemoteException(message)
     }
+
+    companion object {
+        const val LAUNCH_VIEWER_INTENT_ACTION = "com.github.ai.isfprovider.OPEN"
+
+        const val VIEWER_EXTRA_AUTHORITY = "com.github.ai.isfprovider.extra.authority"
+        const val VIEWER_EXTRA_ROOT_PATH = "com.github.ai.isfprovider.extra.rootPath"
+        const val VIEWER_EXTRA_ACCESS_TOKEN = "com.github.ai.isfprovider.extra.accessToken"
+    }
 }
