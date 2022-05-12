@@ -13,13 +13,15 @@ import com.github.ai.fprovider.client.domain.Settings
 import com.github.ai.fprovider.client.domain.file_list.FileListInteractor
 import com.github.ai.fprovider.client.extension.toFilePath
 import com.github.ai.fprovider.client.presentation.Screens.SettingsScreen
+import com.github.ai.fprovider.client.presentation.core.cells.BaseCellViewModel
 import com.github.ai.fprovider.client.presentation.core.model.ScreenState
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
-import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellFactory
-import com.github.ai.fprovider.client.presentation.file_list.cells.viewmodel.FileCellViewModel
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellModelFactory
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellViewModelFactory
 import com.github.ai.fprovider.client.presentation.file_list.model.FileDialogModel
 import com.github.ai.fprovider.client.presentation.file_list.model.OpenFileModel
+import com.github.ai.fprovider.client.presentation.file_list.model.ProviderData
 import com.github.ai.fprovider.client.utils.Event
 import com.github.ai.fprovider.client.utils.MimeTypes
 import com.github.ai.fprovider.client.utils.StringUtils.EMPTY
@@ -28,7 +30,8 @@ import kotlinx.coroutines.launch
 
 class FileListViewModel(
     private val interactor: FileListInteractor,
-    private val cellFactory: FileListCellFactory,
+    private val modelFactory: FileListCellModelFactory,
+    private val viewModelFactory: FileListCellViewModelFactory,
     private val errorInteractor: ErrorInteractor,
     private val resourceProvider: ResourceProvider,
     private val router: Router,
@@ -36,7 +39,7 @@ class FileListViewModel(
 ) : ViewModel() {
 
     val screenState = MutableLiveData(ScreenState.loading())
-    val cellViewModels = MutableLiveData<List<FileCellViewModel>>()
+    val cellViewModels = MutableLiveData<List<BaseCellViewModel>>()
     val actionBarTitle = MutableLiveData(resourceProvider.getString(R.string.app_name))
     val isActionBarBackButtonVisible = MutableLiveData(false)
     val showToastMessageEvent = MutableLiveData<Event<String>>()
@@ -48,6 +51,10 @@ class FileListViewModel(
     private var currentDir: FileEntity? = null
     private val parents = mutableListOf<FileEntity>()
     private val settingsListener = OnSettingsChangeListener { onSettingsChanged(it) }
+    private var args: FileListArgs? = null
+    private var accessToken: String? = null
+    private var handledProviderData: ProviderData? = null
+    private var isShowSaveDataQuestion: Boolean = false
     private var currentPath = FilePath(
         authority = readContentProviderAuthority(),
         path = readRootPath(),
@@ -62,14 +69,37 @@ class FileListViewModel(
         settings.unregisterListener(settingsListener)
     }
 
-    fun loadData() {
+    fun start(args: FileListArgs?) {
+        this.args = args
+
+        if (args?.providerData != null && args.providerData != handledProviderData) {
+            setRootPath(
+                FilePath(
+                    authority = args.providerData.authority,
+                    path = args.providerData.rootPath,
+                    accessToken = args.providerData.accessToken
+                )
+            )
+            accessToken = args.providerData.accessToken
+            handledProviderData = args.providerData
+
+            isShowSaveDataQuestion = true
+        } else {
+            accessToken = null
+            isShowSaveDataQuestion = false
+        }
+
+        loadData()
+    }
+
+    private fun loadData() {
         screenState.value = ScreenState.loading()
 
         viewModelScope.launch {
             if (currentDir == null) {
                 val getCurrentDir = interactor.getFile(
                     currentPath.toFilePath(
-                        accessToken = readAccessToken()
+                        accessToken = accessToken ?: readAccessToken()
                     )
                 )
                 if (getCurrentDir.isSuccess) {
@@ -87,16 +117,19 @@ class FileListViewModel(
             if (getFilesResult.isSuccess) {
                 val files = getFilesResult.getOrThrow()
 
-                val cellModels = cellFactory.createCellModels(
+                val cellModels = modelFactory.createCellModels(
                     parent = parentDir,
                     files = files,
-                    accessToken = readAccessToken(),
+                    accessToken = accessToken ?: readAccessToken(),
                     isShowHiddenFiles = settings.isShowHiddenFiles,
+                    isShowSaveDataQuestion = isShowSaveDataQuestion,
+                    onSaveDataCancelled = { onSaveDataCancelled() },
+                    onSaveDataConfirmed = { onSaveDataConfirmed() },
                     onFileClicked = { file -> onFileClicked(file) },
                     onFileLongClicked = { file -> onFileLongClicked(file) }
                 )
 
-                cellViewModels.value = cellModels.map { FileCellViewModel(it) }
+                cellViewModels.value = viewModelFactory.createViewModels(cellModels)
 
                 screenState.value = ScreenState.data()
             } else {
@@ -150,6 +183,26 @@ class FileListViewModel(
 
     fun onOpenFileAsTextClicked(file: FileEntity) {
         openFile(file, isOpenAsText = true)
+    }
+
+    private fun onSaveDataCancelled() {
+        isShowSaveDataQuestion = false
+
+        loadData()
+    }
+
+    private fun onSaveDataConfirmed() {
+        val data = handledProviderData ?: return
+
+        settings.contentProviderAuthority = data.authority
+        settings.rootPath = data.rootPath
+        settings.accessToken = data.accessToken
+
+        accessToken = null
+
+        isShowSaveDataQuestion = false
+
+        loadData()
     }
 
     private fun showError(error: Exception) {
@@ -209,11 +262,11 @@ class FileListViewModel(
             val last = parents.last()
             val beforeLast = parents[parents.size - 2]
 
-            onDirectoryChanged(last, beforeLast)
+            onDirectoryOpened(last, beforeLast)
         } else if (parents.size > 0) {
             val last = parents.last()
 
-            onDirectoryChanged(last, null)
+            onDirectoryOpened(last, null)
         }
 
         if (parents.isNotEmpty()) {
@@ -227,16 +280,16 @@ class FileListViewModel(
         val currentDir = this.currentDir ?: return
 
         parents.add(currentDir)
-        onDirectoryChanged(dir, currentDir)
+        onDirectoryOpened(dir, currentDir)
 
         loadData()
     }
 
-    private fun onDirectoryChanged(currentDir: FileEntity, parentDir: FileEntity?) {
+    private fun onDirectoryOpened(currentDir: FileEntity, parentDir: FileEntity?) {
         this.currentDir = currentDir
         this.parentDir = parentDir
 
-        currentPath = currentDir.toFilePath(accessToken = readAccessToken())
+        currentPath = currentDir.toFilePath(accessToken = accessToken ?: readAccessToken())
         isActionBarBackButtonVisible.value = (parentDir != null)
         actionBarTitle.value = if (parentDir != null) {
             currentDir.name
@@ -271,6 +324,13 @@ class FileListViewModel(
                 loadData()
             }
         }
+    }
+
+    private fun setRootPath(path: FilePath) {
+        currentPath = path
+        currentDir = null
+        parentDir = null
+        parents.clear()
     }
 
     private fun canGoBack(): Boolean {

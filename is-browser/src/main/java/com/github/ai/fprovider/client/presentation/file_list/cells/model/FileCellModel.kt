@@ -2,6 +2,7 @@ package com.github.ai.fprovider.client.presentation.file_list.cells.model
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
+import com.github.ai.fprovider.client.presentation.core.cells.BaseCellModel
 
 data class FileCellModel(
     val id: String,
@@ -11,4 +12,4 @@ data class FileCellModel(
     val imageUri: Uri? = null,
     val onClick: ((id: String) -> Unit)? = null,
     val onLongClick: ((id: String) -> Unit)? = null
-)
+) : BaseCellModel

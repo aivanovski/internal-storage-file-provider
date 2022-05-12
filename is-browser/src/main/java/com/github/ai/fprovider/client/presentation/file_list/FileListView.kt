@@ -26,14 +26,14 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.github.ai.fprovider.client.data.entity.FileEntity
+import com.github.ai.fprovider.client.presentation.core.cells.BaseCellViewModel
 import com.github.ai.fprovider.client.presentation.core.model.ScreenState
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.EMPTY
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.ERROR
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.LOADING
-import com.github.ai.fprovider.client.presentation.file_list.cells.view.FileCell
-import com.github.ai.fprovider.client.presentation.file_list.cells.viewmodel.FileCellViewModel
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellFactory
 import com.github.ai.fprovider.client.presentation.file_list.dialog.FileDialog
 import com.github.ai.fprovider.client.presentation.file_list.model.FileDialogModel
 import com.github.ai.fprovider.client.presentation.theme.dividerColor
@@ -43,12 +43,14 @@ import com.github.ai.fprovider.client.utils.StringUtils
 @Composable
 fun FileListScreen(viewModel: FileListViewModel) {
     val state by viewModel.screenState.observeAsState(ScreenState.loading())
-    val cells by viewModel.cellViewModels.observeAsState(emptyList())
+    val cellViewModels by viewModel.cellViewModels.observeAsState(emptyList())
     val fileDialogModel by viewModel.showFileDialogEvent.observeAsState()
+    val cellFactory = FileListCellFactory()
 
     FileListLayout(
         state = state,
-        cells = cells,
+        cellViewModels = cellViewModels,
+        cellFactory = cellFactory,
         fileDialogModel = fileDialogModel,
         onFileDialogDismissed = {
             viewModel.onFileDialogDismissed()
@@ -66,7 +68,8 @@ fun FileListScreen(viewModel: FileListViewModel) {
 @Composable
 fun FileListLayout(
     state: ScreenState,
-    cells: List<FileCellViewModel>,
+    cellViewModels: List<BaseCellViewModel>,
+    cellFactory: FileListCellFactory,
     fileDialogModel: FileDialogModel?,
     onFileDialogDismissed: () -> Unit,
     onOpenFileClicked: (file: FileEntity) -> Unit,
@@ -110,8 +113,8 @@ fun FileListLayout(
                         }
                     }
                     LazyColumn {
-                        items(cells) { cell ->
-                            FileCell(viewModel = cell)
+                        items(cellViewModels) { viewModel ->
+                            cellFactory.createCell(viewModel)
                             Divider(color = dividerColor)
                         }
                     }

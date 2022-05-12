@@ -71,7 +71,7 @@ android {
 }
 
 dependencies {
-    implementation "com.github.aivanovski:internal-storage-file-provider:0.8.0"
+    implementation "com.github.aivanovski:internal-storage-file-provider:0.9.0"
 
     // Test dependencies
     testImplementation "junit:junit:$jUnitVersion"

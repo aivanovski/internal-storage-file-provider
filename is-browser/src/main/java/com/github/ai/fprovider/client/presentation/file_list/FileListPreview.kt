@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.ai.fprovider.client.presentation.core.model.ScreenState
-import com.github.ai.fprovider.client.presentation.file_list.cells.view.DIRECTORY_MODEL
-import com.github.ai.fprovider.client.presentation.file_list.cells.view.FILE_MODEL
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellFactory
+import com.github.ai.fprovider.client.presentation.file_list.cells.cell.DIRECTORY_MODEL
+import com.github.ai.fprovider.client.presentation.file_list.cells.cell.FILE_MODEL
 import com.github.ai.fprovider.client.presentation.file_list.cells.viewmodel.FileCellViewModel
 import com.github.ai.fprovider.client.presentation.theme.AppTheme
 import com.github.ai.fprovider.client.presentation.theme.backgroundColor
@@ -22,17 +23,18 @@ private val CELLS = listOf(
 @Composable
 private fun Preview(
     state: ScreenState,
-    cells: List<FileCellViewModel>
+    cellViewModels: List<FileCellViewModel>
 ) {
     AppTheme {
         Box(modifier = Modifier.background(backgroundColor)) {
             FileListLayout(
                 state = state,
-                cells = cells,
+                cellViewModels = cellViewModels,
+                cellFactory = FileListCellFactory(),
                 fileDialogModel = null,
                 onFileDialogDismissed = {},
                 onOpenFileClicked = {},
-                onOpenFileAsTextClicked = {}
+                onOpenFileAsTextClicked = {},
             )
         }
     }
@@ -44,7 +46,7 @@ private fun Preview(
 fun FileListScreen_Data() {
     Preview(
         state = ScreenState.data(),
-        cells = CELLS
+        cellViewModels = CELLS
     )
 }
 
@@ -54,7 +56,7 @@ fun FileListScreen_Data() {
 fun FileListScreen_DataWithError() {
     Preview(
         state = ScreenState.dataWithError("Error text"),
-        cells = CELLS
+        cellViewModels = CELLS
     )
 }
 
@@ -64,7 +66,7 @@ fun FileListScreen_DataWithError() {
 fun FileListScreen_Empty() {
     Preview(
         state = ScreenState.empty("No items"),
-        cells = emptyList()
+        cellViewModels = emptyList()
     )
 }
 
@@ -74,7 +76,7 @@ fun FileListScreen_Empty() {
 fun FileListScreen_Loading() {
     Preview(
         state = ScreenState.loading(),
-        cells = emptyList()
+        cellViewModels = emptyList()
     )
 }
 
@@ -84,6 +86,6 @@ fun FileListScreen_Loading() {
 fun FileListScreen_Error() {
     Preview(
         state = ScreenState.error("Error text with detailed long message on the screen"),
-        cells = emptyList()
+        cellViewModels = emptyList()
     )
 }

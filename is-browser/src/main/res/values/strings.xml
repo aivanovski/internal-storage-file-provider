@@ -13,6 +13,9 @@
     <string name="mime_type">Mime-Type</string>
     <string name="open_as_text">Open as text</string>
     <string name="open">Open</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="save_data_question">Do you want to save access data in settings for future use?</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

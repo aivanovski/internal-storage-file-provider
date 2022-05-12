@@ -13,10 +13,15 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.github.ai.fprovider.client.presentation.MainActivity">
+            android:name="com.github.ai.fprovider.client.presentation.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.github.ai.isfprovider.OPEN" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 

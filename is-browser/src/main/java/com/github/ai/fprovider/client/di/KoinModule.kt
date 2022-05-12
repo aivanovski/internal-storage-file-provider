@@ -11,7 +11,8 @@ import com.github.ai.fprovider.client.domain.Settings
 import com.github.ai.fprovider.client.domain.file_list.FileListInteractor
 import com.github.ai.fprovider.client.domain.proxy_provider.ProxyProviderInteractor
 import com.github.ai.fprovider.client.presentation.file_list.FileListViewModel
-import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellFactory
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellModelFactory
+import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellViewModelFactory
 import com.github.ai.fprovider.client.presentation.settings.SettingsViewModel
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
@@ -41,8 +42,9 @@ object KoinModule {
 
         // FileList
         single { FileListInteractor(get(), get()) }
-        single { FileListCellFactory(get()) }
-        viewModel { FileListViewModel(get(), get(), get(), get(), get(), get()) }
+        single { FileListCellModelFactory(get()) }
+        single { FileListCellViewModelFactory() }
+        viewModel { FileListViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
         // Settings
         viewModel { SettingsViewModel(get(), get(), get()) }

@@ -1,4 +1,4 @@
-package com.github.ai.fprovider.client.presentation.file_list.cells.view
+package com.github.ai.fprovider.client.presentation.file_list.cells.cell
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
@@ -26,7 +27,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.github.ai.fprovider.client.R
+import com.github.ai.fprovider.client.presentation.file_list.cells.model.FileCellModel
 import com.github.ai.fprovider.client.presentation.file_list.cells.viewmodel.FileCellViewModel
+import com.github.ai.fprovider.client.presentation.theme.AppTheme
+import com.github.ai.fprovider.client.presentation.theme.backgroundColor
 
 @ExperimentalFoundationApi
 @Composable
@@ -130,5 +135,43 @@ fun FileCell(viewModel: FileCellViewModel) {
                     width = Dimension.fillToConstraints
                 }
         )
+    }
+}
+
+val FILE_MODEL = FileCellModel(
+    id = "1",
+    name = "image.jpg",
+    description = "12 kB",
+    iconResId = R.drawable.ic_file_white_24dp
+)
+
+val DIRECTORY_MODEL = FileCellModel(
+    id = "2",
+    name = "Downloads/",
+    description = "folder",
+    iconResId = R.drawable.ic_folder_white_24dp
+)
+
+@ExperimentalFoundationApi
+@Preview
+@Composable
+fun FileCellPreviewWithFile() {
+    Preview(model = FILE_MODEL)
+}
+
+@ExperimentalFoundationApi
+@Preview
+@Composable
+fun FileCellPreviewWithDir() {
+    Preview(model = DIRECTORY_MODEL)
+}
+
+@ExperimentalFoundationApi
+@Composable
+private fun Preview(model: FileCellModel) {
+    AppTheme {
+        Box(modifier = Modifier.background(backgroundColor)) {
+            FileCell(FileCellViewModel(model))
+        }
     }
 }

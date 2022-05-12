@@ -18,12 +18,18 @@ import androidx.fragment.app.Fragment
 import com.github.ai.fprovider.client.R
 import com.github.ai.fprovider.client.extension.setupActionBar
 import com.github.ai.fprovider.client.extension.showToastMessage
+import com.github.ai.fprovider.client.extension.withArguments
 import com.github.ai.fprovider.client.utils.EventObserver
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FileListFragment : Fragment() {
 
+    private val args: FileListArgs? by lazy {
+        arguments?.getParcelable(ARGUMENTS)
+    }
+
     private val viewModel: FileListViewModel by viewModel()
+
     private var backCallback: OnBackPressedCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +96,7 @@ class FileListFragment : Fragment() {
         subscribeToLiveData()
         subscribeToEvents()
 
-        viewModel.loadData()
+        viewModel.start(args)
     }
 
     private fun subscribeToLiveData() {
@@ -133,6 +139,14 @@ class FileListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): FileListFragment = FileListFragment()
+
+        private const val ARGUMENTS = "arguments"
+
+        fun newInstance(args: FileListArgs): FileListFragment {
+            return FileListFragment()
+                .withArguments {
+                    putParcelable(ARGUMENTS, args)
+                }
+        }
     }
 }
