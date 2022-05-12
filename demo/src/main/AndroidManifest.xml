@@ -26,7 +26,7 @@
 
         <provider
             android:name="com.github.ai.isfprovider.InternalStorageFileProvider"
-            android:authorities="com.github.ai.isfprovider.demo.files"
+            android:authorities="@string/content_provider_authority"
             android:exported="true" />
 
     </application>
