@@ -96,6 +96,20 @@ class InternalStorageTokenManagerTest {
         assertThat(path).isEqualTo(TOKEN_FOR_IMAGE.rootPath)
     }
 
+    @Test
+    fun `getAllTokens should return all tokens`() {
+        // arrange
+        every { tokenDao.getAll() }.returns(listOf(TOKEN_FOR_IMAGE, TOKEN_FOR_DIRECTORY))
+
+        // act
+        val tokens = tokenManager.getAllTokens()
+
+        // assert
+        val expectedTokens = listOf(TOKEN_FOR_IMAGE, TOKEN_FOR_DIRECTORY)
+            .map { it.authToken }
+        assertThat(tokens).isEqualTo(expectedTokens)
+    }
+
     companion object {
         private const val PATH = "path"
     }
