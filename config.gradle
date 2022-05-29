@@ -5,8 +5,8 @@ ext {
             compileSdk: 30
     ]
     version = [
-            libraryVersionCode: 9,
-            libraryVersionName: "0.9.0",
+            libraryVersionCode: 10,
+            libraryVersionName: "0.10.0",
 
             clientVersionCode : 9,
             clientVersionName : "0.9.0"
