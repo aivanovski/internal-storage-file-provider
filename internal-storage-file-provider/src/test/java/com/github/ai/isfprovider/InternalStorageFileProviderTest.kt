@@ -14,6 +14,7 @@ import com.github.ai.isfprovider.test.TestData.DIRECTORY_FILE
 import com.github.ai.isfprovider.test.TestData.DIRECTORY_MIME_TYPE
 import com.github.ai.isfprovider.test.TestData.IMAGE_FILE
 import com.github.ai.isfprovider.test.TestData.IMAGE_MIME_TYPE
+import com.github.ai.isfprovider.test.catchException
 import com.github.ai.isfprovider.test.toUri
 import com.github.ai.isfprovider.utils.toColumnNames
 import com.google.common.truth.Truth.assertThat
@@ -200,18 +201,6 @@ class InternalStorageFileProviderTest {
     fun update() {
         // TODO: to be done
         contentResolver.update(IMAGE_FILE.toUri(), null, null, null)
-    }
-
-    private fun catchException(block: () -> Unit): Exception {
-        var error: Exception? = null
-
-        try {
-            block.invoke()
-        } catch (e: Exception) {
-            error = e
-        }
-
-        return error ?: throw IllegalStateException("Unable to catch exception")
     }
 
     companion object {

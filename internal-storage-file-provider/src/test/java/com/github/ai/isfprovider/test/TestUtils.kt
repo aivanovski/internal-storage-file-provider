@@ -70,3 +70,15 @@ fun createUri(
         Uri.parse("$scheme://$authority$path")
     }
 }
+
+fun catchException(block: () -> Unit): Exception {
+    var error: Exception? = null
+
+    try {
+        block.invoke()
+    } catch (e: Exception) {
+        error = e
+    }
+
+    return error ?: throw IllegalStateException("Unable to catch exception")
+}
