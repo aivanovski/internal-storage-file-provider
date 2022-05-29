@@ -157,10 +157,8 @@ class InternalStorageFileProvider constructor() : ContentProvider() {
     }
 
     companion object {
-        const val LAUNCH_VIEWER_INTENT_ACTION = "com.github.ai.isfprovider.OPEN"
-
         const val VIEWER_EXTRA_AUTHORITY = "com.github.ai.isfprovider.extra.authority"
         const val VIEWER_EXTRA_ROOT_PATH = "com.github.ai.isfprovider.extra.rootPath"
-        const val VIEWER_EXTRA_ACCESS_TOKEN = "com.github.ai.isfprovider.extra.accessToken"
+        const val VIEWER_EXTRA_AUTH_TOKEN = "com.github.ai.isfprovider.extra.authToken"
     }
 }

@@ -10,4 +10,8 @@ internal class AndroidLogcatLogger(type: KClass<*>) : Logger {
     override fun d(message: String) {
         Log.d(tag, message)
     }
+
+    override fun e(message: String) {
+        Log.e(tag, message)
+    }
 }
