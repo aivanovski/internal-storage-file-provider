@@ -83,8 +83,9 @@ class InternalStorageBroadcastReceiver(
             return
         }
 
-        val intent = Intent(context, InternalStorageBroadcastReceiver::class.java)
+        val intent = Intent()
             .apply {
+                action = InternalStorageFileProvider.LAUNCH_VIEWER_INTENT_ACTION
                 putExtra(InternalStorageFileProvider.VIEWER_EXTRA_AUTHORITY, authority)
                 putExtra(InternalStorageFileProvider.VIEWER_EXTRA_ROOT_PATH, path)
                 putExtra(InternalStorageFileProvider.VIEWER_EXTRA_AUTH_TOKEN, token)
