@@ -246,10 +246,8 @@ class InternalStorageBroadcastReceiverTest {
         // assert
         val viewerIntent = capturedViewerIntent.captured
 
-        assertThat(viewerIntent.component?.packageName)
-            .isEqualTo(PACKAGE_NAME)
-        assertThat(viewerIntent.component?.className)
-            .isEqualTo(InternalStorageBroadcastReceiver::class.java.name)
+        assertThat(viewerIntent.action)
+            .isEqualTo(InternalStorageFileProvider.LAUNCH_VIEWER_INTENT_ACTION)
         assertThat(viewerIntent.extras?.getString(InternalStorageFileProvider.VIEWER_EXTRA_AUTHORITY))
             .isEqualTo(AUTHORITY)
         assertThat(viewerIntent.extras?.getString(InternalStorageFileProvider.VIEWER_EXTRA_ROOT_PATH))
