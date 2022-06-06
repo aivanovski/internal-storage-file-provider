@@ -13,22 +13,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val isProgressVisible: Boolean by viewModel.isProgressVisible.observeAsState(false)
     val isOpenButtonEnabled by viewModel.isOpenButtonEnabled.observeAsState(false)
-    val message: String by viewModel.accessTokenMessage.observeAsState("")
+    val message: String by viewModel.currentTokensText.observeAsState("")
+    val generatedToken: String by viewModel.generatedTokenText.observeAsState("")
 
     MainScreenLayout(
         isProgressVisible = isProgressVisible,
         isOpenButtonEnabled = isOpenButtonEnabled,
-        message = message,
-        onGenerateStructureClicked = { viewModel.createFileStructure() },
-        onGenerateTokenClicked = { viewModel.generateAccessToken() },
-        onOpenWithViewerClicked =  { viewModel.showViewer() }
+        generatedTokenText = generatedToken,
+        currentTokensText = message,
+        onGenerateTokenClicked = { viewModel.onGenerateTokenClicked() },
+        onLaunchViewerActivityClicked = { viewModel.onLaunchViewerActivityClicked() },
+        onSetTokenViaManagerClicked = { viewModel.onSetTokenViaTokenManagerClicked() },
+        onClearTokensViaManagerClicked = { viewModel.onRemoveAllTokensViaTokenManagerClicked() },
+        onSetTokenViaBroadcastClicked = { viewModel.onSetTokenViaBroadcastClicked() },
+        onClearTokensViaBroadcastClicked = { viewModel.onRemoveAllTokenViaBroadcastClicked() }
     )
 }
 
@@ -36,21 +40,25 @@ fun MainScreen(viewModel: MainViewModel) {
 private fun MainScreenLayout(
     isProgressVisible: Boolean,
     isOpenButtonEnabled: Boolean,
-    message: String,
-    onGenerateStructureClicked: (() -> Unit)? = null,
+    generatedTokenText: String,
+    currentTokensText: String,
     onGenerateTokenClicked: (() -> Unit)? = null,
-    onOpenWithViewerClicked: (() -> Unit)? = null
+    onLaunchViewerActivityClicked: (() -> Unit)? = null,
+    onSetTokenViaManagerClicked: (() -> Unit)? = null,
+    onClearTokensViaManagerClicked: (() -> Unit)? = null,
+    onSetTokenViaBroadcastClicked: (() -> Unit)? = null,
+    onClearTokensViaBroadcastClicked: (() -> Unit)? = null,
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (fileStructureButton, tokenButton, viewerButton, tokenText, progress) = createRefs()
-
-        createVerticalChain(
-            fileStructureButton,
-            tokenButton,
+        val (generateButton,
+            generateText,
+            setTokenViaManagerButton,
+            setTokenViaBroadcastButton,
+            clearTokensViaManagerButton,
+            clearTokensViaBroadcastButton,
             viewerButton,
             tokenText,
-            chainStyle = ChainStyle.Packed
-        )
+            progress) = createRefs()
 
         if (isProgressVisible) {
             CircularProgressIndicator(
@@ -63,56 +71,92 @@ private fun MainScreenLayout(
             )
         } else {
             Button(
-                onClick = { onGenerateStructureClicked?.invoke() },
-                modifier = Modifier.constrainAs(fileStructureButton) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            ) {
-                Text(text = "Create file structure")
-            }
-
-            Button(
                 onClick = { onGenerateTokenClicked?.invoke() },
                 modifier = Modifier
-                    .padding(top = 12.dp)
-                    .constrainAs(tokenButton) {
-                        top.linkTo(fileStructureButton.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                    .constrainAs(generateButton) {
+                        top.linkTo(parent.top, margin = 24.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
                     }
             ) {
-                Text(text = "Generate new token")
+                Text(text = "Generate token")
+            }
+
+            Text(
+                text = generatedTokenText,
+                fontSize = 20.sp,
+                modifier = Modifier
+                    .constrainAs(generateText) {
+                        top.linkTo(generateButton.top)
+                        start.linkTo(generateButton.end, margin = 16.dp)
+                        bottom.linkTo(generateButton.bottom)
+                    }
+            )
+
+            Button(
+                onClick = { onSetTokenViaManagerClicked?.invoke() },
+                modifier = Modifier
+                    .constrainAs(setTokenViaManagerButton) {
+                        top.linkTo(generateButton.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            ) {
+                Text(text = "Set token via TokenManager")
             }
 
             Button(
-                onClick = { onOpenWithViewerClicked?.invoke() },
-                enabled = isOpenButtonEnabled,
+                onClick = { onClearTokensViaManagerClicked?.invoke() },
                 modifier = Modifier
-                    .padding(top = 12.dp)
-                    .constrainAs(viewerButton) {
-                        top.linkTo(tokenButton.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                    .constrainAs(clearTokensViaManagerButton) {
+                        top.linkTo(setTokenViaManagerButton.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
                     }
             ) {
-                Text(text = "Open files with viewer")
+                Text(text = "Remove all tokens via TokenManager")
             }
 
-            if (message.isNotEmpty()) {
-                Text(
-                    text = message,
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .constrainAs(tokenText) {
-                            top.linkTo(viewerButton.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
-                        }
-                )
+            Button(
+                onClick = { onSetTokenViaBroadcastClicked?.invoke() },
+                modifier = Modifier
+                    .constrainAs(setTokenViaBroadcastButton) {
+                        top.linkTo(clearTokensViaManagerButton.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            ) {
+                Text(text = "Set token via Broadcast")
+            }
+
+            Button(
+                onClick = { onClearTokensViaBroadcastClicked?.invoke() },
+                modifier = Modifier
+                    .constrainAs(clearTokensViaBroadcastButton) {
+                        top.linkTo(setTokenViaBroadcastButton.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            ) {
+                Text(text = "Remove all tokens via Broadcast")
+            }
+
+            Text(
+                text = currentTokensText,
+                fontSize = 20.sp,
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .constrainAs(tokenText) {
+                        top.linkTo(clearTokensViaBroadcastButton.bottom)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            )
+
+            Button(
+                onClick = { onLaunchViewerActivityClicked?.invoke() },
+                enabled = isOpenButtonEnabled,
+                modifier = Modifier
+                    .constrainAs(viewerButton) {
+                        bottom.linkTo(parent.bottom, margin = 16.dp)
+                        start.linkTo(parent.start, margin = 16.dp)
+                    }
+            ) {
+                Text(text = "Launch viewer Activity")
             }
         }
     }
@@ -125,7 +169,8 @@ fun LayoutPreview() {
         MainScreenLayout(
             isProgressVisible = false,
             isOpenButtonEnabled = true,
-            message = "Message"
+            generatedTokenText = "Generated: 1111",
+            currentTokensText = "Current tokens:\n1111\n2222"
         )
     }
 }

@@ -3,5 +3,6 @@
     <string name="app_name">Demo(ISFP)</string>
 
     <string name="content_provider_authority">com.github.ai.isfprovider.demo.files</string>
+    <string name="broadcast_receiver_action">com.github.ai.isfprovider.InternalStorageBroadcastReceiver</string>
 
 </resources>

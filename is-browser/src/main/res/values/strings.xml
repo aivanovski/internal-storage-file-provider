@@ -16,6 +16,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="save_data_question">Do you want to save access data in settings for future use?</string>
+    <string name="content_provider_access_is_not_configured">ContentProvider access is not configured</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
@@ -24,7 +25,7 @@
     <string name="not_specified">Not specified</string>
     <string name="root_path_title">Root directory path</string>
     <string name="authority_title">Content provider authority</string>
-    <string name="authorization_preferences">Authorization preferences</string>
+    <string name="authorization_preferences">ContentProvider preferences</string>
     <string name="ui_preferences">UI preferences</string>
     <string name="show_hidden_files">Show hidden files</string>
 

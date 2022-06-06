@@ -11,7 +11,7 @@ import com.github.ai.fprovider.client.presentation.file_list.FileListArgs
 import com.github.ai.fprovider.client.presentation.file_list.model.ProviderData
 import com.github.ai.isfprovider.InternalStorageFileProvider.Companion.VIEWER_EXTRA_AUTHORITY
 import com.github.ai.isfprovider.InternalStorageFileProvider.Companion.VIEWER_EXTRA_ROOT_PATH
-import com.github.ai.isfprovider.InternalStorageFileProvider.Companion.VIEWER_EXTRA_ACCESS_TOKEN
+import com.github.ai.isfprovider.InternalStorageFileProvider.Companion.VIEWER_EXTRA_AUTH_TOKEN
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         val authority = extras.getString(VIEWER_EXTRA_AUTHORITY)
         val rootPath = extras.getString(VIEWER_EXTRA_ROOT_PATH)
-        val accessToken = extras.getString(VIEWER_EXTRA_ACCESS_TOKEN)
+        val accessToken = extras.getString(VIEWER_EXTRA_AUTH_TOKEN)
 
         val data = if (!authority.isNullOrEmpty() &&
             !rootPath.isNullOrEmpty() &&
