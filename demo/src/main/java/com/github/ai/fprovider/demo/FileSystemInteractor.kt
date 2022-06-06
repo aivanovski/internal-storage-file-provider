@@ -16,6 +16,14 @@ import java.io.InputStream
 
 class FileSystemInteractor(private val context: Context) {
 
+    suspend fun isFilesCreated(): Boolean =
+        withContext(Dispatchers.IO) {
+            val dataRootDir = context.filesDir
+
+            val dir = File(dataRootDir, FILE_TREE_ROOT.path)
+            dir.exists()
+        }
+
     suspend fun createFilesInsideInternalStorage() {
         withContext(Dispatchers.IO) {
             val dataRootDir = context.filesDir

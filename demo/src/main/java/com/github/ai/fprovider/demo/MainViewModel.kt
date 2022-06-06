@@ -1,5 +1,6 @@
 package com.github.ai.fprovider.demo
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,8 +8,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.ai.fprovider.demo.utils.Event
 import com.github.ai.fprovider.demo.utils.ResourceProvider
+import com.github.ai.isfprovider.InternalStorageBroadcastReceiver
+import com.github.ai.isfprovider.InternalStorageBroadcastReceiver.Companion.COMMAND_ADD_TOKEN
+import com.github.ai.isfprovider.InternalStorageBroadcastReceiver.Companion.COMMAND_LAUNCH_VIEWER
+import com.github.ai.isfprovider.InternalStorageBroadcastReceiver.Companion.COMMAND_REMOVE_ALL_TOKENS
 import com.github.ai.isfprovider.InternalStorageTokenManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
 class MainViewModel(
@@ -23,13 +31,47 @@ class MainViewModel(
     private val _isOpenButtonEnabled = MutableLiveData(false)
     val isOpenButtonEnabled: LiveData<Boolean> = _isOpenButtonEnabled
 
-    private val _accessTokenMessage = MutableLiveData("")
-    val accessTokenMessage: LiveData<String> = _accessTokenMessage
+    private val _currentTokensText = MutableLiveData("")
+    val currentTokensText: LiveData<String> = _currentTokensText
 
-    private val _showViewerEvent = MutableLiveData<Event<AccessData>>()
-    val showViewerEvent: LiveData<Event<AccessData>> = _showViewerEvent
+    private val _generatedTokenText = MutableLiveData("")
+    val generatedTokenText: LiveData<String> = _generatedTokenText
+
+    private val _sendBroadcastIntentEvent = MutableLiveData<Event<Intent>>()
+    val sendBroadcastIntentEvent: LiveData<Event<Intent>> = _sendBroadcastIntentEvent
 
     private var token: String? = null
+    private var generatedToken: String? = null
+    private val shouldCheckToken = AtomicBoolean(true)
+    private var periodicJob: Job? = null
+
+    fun start() {
+        _isProgressVisible.value = true
+
+        viewModelScope.launch {
+            if (!interactor.isFilesCreated()) {
+                interactor.createFilesInsideInternalStorage()
+            }
+            _isProgressVisible.value = false
+
+            loadCurrentToken()
+        }
+
+        shouldCheckToken.set(true)
+        periodicJob = viewModelScope.launch {
+            while (shouldCheckToken.get()) {
+                delay(1000L)
+                loadCurrentToken()
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        shouldCheckToken.set(false)
+        periodicJob?.cancel()
+        periodicJob = null
+    }
 
     fun loadCurrentToken() {
         viewModelScope.launch {
@@ -38,48 +80,76 @@ class MainViewModel(
             _isOpenButtonEnabled.value = (token != null)
 
             if (currentToken != null) {
-                _accessTokenMessage.value = "Current token is: $currentToken"
+                _currentTokensText.value = "Current token is: $currentToken"
             } else {
-                _accessTokenMessage.value = "Access token is not set"
+                _currentTokensText.value = "Access token is not set"
             }
         }
     }
 
-    fun createFileStructure() {
-        _isProgressVisible.value = true
-
-        viewModelScope.launch {
-            interactor.createFilesInsideInternalStorage()
-            _isProgressVisible.value = false
+    fun onGenerateTokenClicked() {
+        val newToken = newToken().apply {
+            generatedToken = this
         }
+
+        _generatedTokenText.value = "Generated: $newToken"
     }
 
-    fun generateAccessToken() {
-        _isProgressVisible.value = true
+    fun onSetTokenViaTokenManagerClicked() {
+        val token = generatedToken ?: return
 
-        viewModelScope.launch {
-            tokenManager.removeAllTokens()
+        tokenManager.removeAllTokens()
+        tokenManager.addToken(token, DEFAULT_PATH_TO_FILES)
 
-            val newToken = newToken()
-            tokenManager.addToken(newToken, DEFAULT_PATH_TO_FILES)
-
-            token = newToken
-            _isOpenButtonEnabled.value = (token != null)
-            _accessTokenMessage.value = "Generated new token: $newToken"
-            _isProgressVisible.value = false
-        }
+        loadCurrentToken()
     }
 
-    fun showViewer() {
+    fun onRemoveAllTokensViaTokenManagerClicked() {
+        tokenManager.removeAllTokens()
+        loadCurrentToken()
+    }
+
+    fun onSetTokenViaBroadcastClicked() {
+        val token = generatedToken ?: return
+        val path = "$DEFAULT_PATH_TO_FILES/*"
+
+        val intent = Intent()
+            .apply {
+                action = resourceProvider.getString(R.string.broadcast_receiver_action)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_COMMAND, COMMAND_ADD_TOKEN)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_AUTH_TOKEN, token)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_PATH, path)
+            }
+
+        _sendBroadcastIntentEvent.value = Event(intent)
+    }
+
+    fun onRemoveAllTokenViaBroadcastClicked() {
+        val intent = Intent()
+            .apply {
+                action = resourceProvider.getString(R.string.broadcast_receiver_action)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_COMMAND, COMMAND_REMOVE_ALL_TOKENS)
+            }
+
+        _sendBroadcastIntentEvent.value = Event(intent)
+    }
+
+    fun onLaunchViewerActivityClicked() {
         val token = token ?: return
 
-        _showViewerEvent.value = Event(
-            AccessData(
-                contentProviderAuthority = resourceProvider.getString(R.string.content_provider_authority),
-                path = "$DEFAULT_PATH_TO_FILES/*",
-                token = token
-            )
-        )
+        val authority = resourceProvider.getString(R.string.content_provider_authority)
+        val path = "$DEFAULT_PATH_TO_FILES/*"
+
+        val intent = Intent()
+            .apply {
+                action = resourceProvider.getString(R.string.broadcast_receiver_action)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_COMMAND, COMMAND_LAUNCH_VIEWER)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_AUTHORITY, authority)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_PATH, path)
+                putExtra(InternalStorageBroadcastReceiver.EXTRA_AUTH_TOKEN, token)
+            }
+
+        _sendBroadcastIntentEvent.value = Event(intent)
     }
 
     private fun newToken(): String {
@@ -92,12 +162,6 @@ class MainViewModel(
 
         return token.toString()
     }
-
-    data class AccessData(
-        val contentProviderAuthority: String,
-        val path: String,
-        val token: String
-    )
 
     companion object {
         private const val DEFAULT_PATH_TO_FILES = "/files/home"
