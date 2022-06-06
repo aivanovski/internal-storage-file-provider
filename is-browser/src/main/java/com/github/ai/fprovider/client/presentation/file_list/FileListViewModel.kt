@@ -15,6 +15,7 @@ import com.github.ai.fprovider.client.extension.toFilePath
 import com.github.ai.fprovider.client.presentation.Screens.SettingsScreen
 import com.github.ai.fprovider.client.presentation.core.cells.BaseCellViewModel
 import com.github.ai.fprovider.client.presentation.core.model.ScreenState
+import com.github.ai.fprovider.client.presentation.core.model.ScreenState.Companion
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA
 import com.github.ai.fprovider.client.presentation.core.model.ScreenStateType.DATA_WITH_ERROR
 import com.github.ai.fprovider.client.presentation.file_list.cells.FileListCellModelFactory
@@ -93,8 +94,14 @@ class FileListViewModel(
     }
 
     private fun loadData() {
-        screenState.value = ScreenState.loading()
+        if (!isProviderDataSpecified() && args?.providerData == null) {
+            screenState.value = ScreenState.empty(
+                resourceProvider.getString(R.string.content_provider_access_is_not_configured)
+            )
+            return
+        }
 
+        screenState.value = ScreenState.loading()
         viewModelScope.launch {
             if (currentDir == null) {
                 val getCurrentDir = interactor.getFile(
@@ -357,5 +364,12 @@ class FileListViewModel(
 
     private fun readAccessToken(): String {
         return settings.accessToken ?: EMPTY
+    }
+
+    private fun isProviderDataSpecified(): Boolean {
+        val authority = settings.contentProviderAuthority
+        val rootPath = settings.rootPath ?: EMPTY
+        val accessToken = settings.accessToken ?: EMPTY
+        return authority.isNotEmpty() && rootPath.isNotEmpty() && accessToken.isNotEmpty()
     }
 }

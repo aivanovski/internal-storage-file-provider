@@ -138,6 +138,7 @@ fun FileListLayout(
                     fontSize = 24.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.constrainAs(emptyText) {
                         linkTo(
                             start = parent.start,
