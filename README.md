@@ -19,9 +19,7 @@ Sub-project `demo/` demonstrates the usage of `InternalStorageFileProvider`.
 This Android library project is available as AAR in [Jitpack](https://jitpack.io/#aivanovski/internal-storage-file-provider) repository
 ```groovy
 repositories {
-    maven {
-        maven { url 'https://jitpack.io' }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
